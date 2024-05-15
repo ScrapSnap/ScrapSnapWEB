@@ -2,18 +2,21 @@
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <Toast />
         <div class="flex flex-column align-items-center justify-content-center">
-            <!--
-            <img :src="logoUrl" alt="ScrapSnap Logo" class="mb-5 w-6rem flex-shrink-0" />
-            -->
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="text-center mb-5">
                         <img :src="logoUrl" alt="Image" height="50" class="mb-3" />
-                        <div class="text-900 text-3xl font-medium mb-3">Welcome back!</div>
-                        <span class="text-600 font-medium">Sign in to continue</span>
+                        <div class="text-900 text-3xl font-medium mb-3">Welcome!</div>
+                        <span class="text-600 font-medium">Sign up to continue</span>
                     </div>
 
                     <div>
+                        <label for="firstname" class="block text-900 text-xl font-medium mb-2">Firstname</label>
+                        <InputText id="firstname" type="text" placeholder="Firstname" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="firstname" />
+
+                        <label for="lastname" class="block text-900 text-xl font-medium mb-2">Lastname</label>
+                        <InputText id="lastname" type="text" placeholder="Lastname" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="lastname" />
+
                         <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
                         <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
 
@@ -27,11 +30,11 @@
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div>
-                        <Button label="Sign In" @click="login" class="w-full p-3 text-xl"></Button>
+                        <Button label="Sign Up" @click="register" class="w-full p-3 text-xl"></Button>
                         <br />
                         <br />
                         <div class="text-center">
-                          <a class="font-medium no-underline ml-2 text-right cursor-pointer" @click="goToSignUp" style="color: var(--primary-color)">Don't have account yet? Sign up</a>
+                          <a class="font-medium no-underline ml-2 text-right cursor-pointer" @click="goToSignIn" style="color: var(--primary-color)">Already have an account? Sign in</a>
                         </div>
                     </div>
                 </div>
@@ -48,13 +51,13 @@ import AppConfig from '@/layout/AppConfig.vue';
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from 'vue-router';
-import {useStore} from "@/store";
 
 const router = useRouter();
-const store = useStore();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
+const firstname = ref('');
+const lastname = ref('');
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
@@ -63,43 +66,29 @@ const logoUrl = computed(() => {
   return `icons/${layoutConfig.darkTheme.value ? 'icon-512x512' : 'icon-512x512'}.png`;
 });
 
-const goToSignUp = () => {
-  router.push('/auth/register');
+const goToSignIn = () => {
+  router.push('/auth/login');
 }
 
-async function login() {
+async function register() {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register`, {
+      firstname: firstname.value,
+      lastname: lastname.value,
       email: email.value,
       password: password.value
     });
 
-    if (!response.data.token) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 });
+    if (!response.data) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 });
       return;
     }
 
-    console.log(response.data.token, response.data.user)
-
-    await store.login(response.data.token, response.data.user);
-    await router.push('/');
-    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
+    await router.push('/auth/login');
+    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Sing up successfull', life: 3000 });
   } catch (error) {
-    console.log(error);
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong', life: 3000 })
   }
 }
 
 </script>
-
-<style scoped>
-.pi-eye {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
-
-.pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
-</style>

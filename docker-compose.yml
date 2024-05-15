@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  scrap-snap-web:
+    build: .
+    ports:
+      - "80:80"

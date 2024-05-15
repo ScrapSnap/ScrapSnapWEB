@@ -2,9 +2,11 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import {useRouter} from "vue-router";
+import {useStore} from "@/store";
 
 const { layoutConfig, onMenuToggle } = useLayout();
 const router = useRouter();
+const store = useStore();
 
 const settingsMenu = ref(null);
 const outsideClickListener = ref(null);
@@ -17,6 +19,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     unbindOutsideClickListener();
 });
+
+const user = computed(() => store.getUser());
 
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
@@ -78,7 +82,7 @@ const settingsMenuItems = ref([
 
 async function logout() {
     try {
-        await localStorage.removeItem('token');
+        store.logout();
         await router.push('/auth/login');
     } catch (error) {
         console.log(error);
@@ -90,7 +94,7 @@ async function logout() {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>SAKAI</span>
+            <span>Welcome, {{ user?.firstname || "" }}</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
+import { useStore } from '../store/index';
+import AuthService from "@/service/AuthService";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -11,7 +13,10 @@ const router = createRouter({
                 {
                     path: '/',
                     name: 'dashboard',
-                    component: () => import('@/views/pages/Empty.vue')
+                    component: () => import('@/views/pages/Empty.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
                 }
             ]
         },
@@ -20,11 +25,15 @@ const router = createRouter({
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
         {
             path: '/auth/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
+        },
+        {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Register.vue')
         },
         {
             path: '/auth/access',
@@ -38,5 +47,28 @@ const router = createRouter({
         }
     ]
 });
+
+router.beforeEach((to, from, next) => {
+    const loggedIn = localStorage.getItem('loggedIn')
+    const store = useStore();
+
+    if (loggedIn === 'true') {
+        store.setLoggedIn(true)
+        const user = localStorage.getItem('user')
+        console.log(user)
+        if (user && user !== 'undefined') {
+            store.setUser(JSON.parse(user))
+        }
+        if (to.name === 'login') {
+            return next('/')
+        }
+    }
+
+    if (to.meta.requiresAuth && !AuthService.isAuthenticated()) {
+        return next('/login')
+    }
+
+    next()
+})
 
 export default router;

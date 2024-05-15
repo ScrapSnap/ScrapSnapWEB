@@ -43,8 +43,10 @@ import AppConfig from '@/layout/AppConfig.vue';
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from 'vue-router';
+import {useStore} from "@/store";
 
 const router = useRouter();
+const store = useStore();
 const toast = useToast();
 const { layoutConfig } = useLayout();
 
@@ -64,10 +66,18 @@ async function login() {
       password: password.value
     });
 
-    await localStorage.setItem('token', response.data.token);
+    if (!response.data.token) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 });
+      return;
+    }
+
+    console.log(response.data.token, response.data.user)
+
+    await store.login(response.data.token, response.data.user);
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
   } catch (error) {
+    console.log(error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
   }
 }

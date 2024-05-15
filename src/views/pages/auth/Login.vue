@@ -1,5 +1,6 @@
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+        <Toast />
         <div class="flex flex-column align-items-center justify-content-center">
             <!--
             <img :src="logoUrl" alt="ScrapSnap Logo" class="mb-5 w-6rem flex-shrink-0" />
@@ -26,7 +27,7 @@
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
                         </div>
-                        <Button label="Sign In" class="w-full p-3 text-xl"></Button>
+                        <Button label="Sign In" @click="login" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>
             </div>
@@ -39,8 +40,14 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
+import axios from "axios";
+import { useToast } from "primevue/usetoast";
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const toast = useToast();
 const { layoutConfig } = useLayout();
+
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
@@ -49,6 +56,21 @@ const logoUrl = computed(() => {
   return `icons/${layoutConfig.darkTheme.value ? 'icon-512x512' : 'icon-512x512'}.png`;
 });
 
+
+async function login() {
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+      email: email.value,
+      password: password.value
+    });
+
+    await localStorage.setItem('token', response.data.token);
+    await router.push('/');
+    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
+  }
+}
 
 </script>
 

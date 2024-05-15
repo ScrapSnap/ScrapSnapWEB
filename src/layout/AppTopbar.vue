@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import {useRouter} from "vue-router";
 
 const { layoutConfig, onMenuToggle } = useLayout();
+const router = useRouter();
 
 const settingsMenu = ref(null);
 const outsideClickListener = ref(null);
@@ -67,9 +69,21 @@ const settingsMenuItems = ref([
     },
     {
         label: 'Logout',
-        icon: 'pi pi-sign-out'
+        icon: 'pi pi-sign-out',
+        command: () => {
+            logout();
+        }
     }
 ]);
+
+async function logout() {
+    try {
+        await localStorage.removeItem('token');
+        await router.push('/auth/login');
+    } catch (error) {
+        console.log(error);
+    }
+}
 </script>
 
 <template>

@@ -8,7 +8,7 @@ export const useStore = defineStore('app', () => {
 
     // actions
     const login = (newToken, newUser) => {
-        localStorage.setItem('token', JSON.stringify(newToken));
+        localStorage.setItem('token', newToken);
         localStorage.setItem('user', JSON.stringify(newUser));
         localStorage.setItem('loggedIn', 'true');
         token.value = newToken;

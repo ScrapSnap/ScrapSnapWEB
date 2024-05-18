@@ -23,7 +23,7 @@ onBeforeUnmount(() => {
 const user = computed(() => store.getUser());
 
 const logoUrl = computed(() => {
-    return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+    return `/icons/${layoutConfig.darkTheme.value ? 'icon-512x512' : 'icon-512x512'}.png`;
 });
 
 const onTopBarMenuButton = () => {
@@ -94,7 +94,7 @@ async function logout() {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>Welcome, {{ user?.firstname || "" }}</span>
+            <span><b>ScrapSnap</b></span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

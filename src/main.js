@@ -1,34 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import axios from 'axios';
-
-const axiosInstance = axios.create({});
-
-axiosInstance.interceptors.request.use(
-    config => {
-        const token = localStorage.getItem('token');
-        if (token && token !== '') {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
-
-axiosInstance.interceptors.response.use(
-    response => {
-        return response;
-    },
-    error => {
-        if (error.response && error.response.status === 401) {
-            router.push('/auth/login');
-        }
-        return Promise.reject(error);
-    }
-);
+import axiosInstance from "@/axios";
 
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -143,6 +116,8 @@ app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+
+app.provide('axios', axiosInstance);
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);

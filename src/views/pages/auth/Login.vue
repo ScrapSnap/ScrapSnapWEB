@@ -79,8 +79,6 @@ async function login() {
       return;
     }
 
-    console.log(response.data.token, response.data.user)
-
     await store.login(response.data.token, response.data.user);
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });

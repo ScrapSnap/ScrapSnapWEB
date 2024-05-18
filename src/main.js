@@ -129,6 +129,19 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+if ('serviceWorker' in navigator && 'periodicSync' in navigator) {
+    navigator.serviceWorker.ready.then(async registration => {
+        try {
+            await registration.periodicSync.register('sync-data', {
+                minInterval: 60 * 1000, // 1 minute
+            });
+            console.log('Periodic Sync registered');
+        } catch (error) {
+            console.error('Periodic Sync registration failed:', error);
+        }
+    });
+}
+
 app.provide('axios', axiosInstance);
 
 app.directive('tooltip', Tooltip);

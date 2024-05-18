@@ -67,7 +67,6 @@ router.beforeEach((to, from, next) => {
     if (loggedIn === 'true') {
         store.setLoggedIn(true)
         const user = localStorage.getItem('user')
-        console.log(user)
         if (user && user !== 'undefined') {
             store.setUser(JSON.parse(user))
         }

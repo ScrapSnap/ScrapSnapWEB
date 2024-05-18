@@ -7,7 +7,7 @@
       <Button label="New Schedule" icon="pi pi-plus" @click="showAddScheduleDialog" />
     </div>
 
-    <DataTable :value="loading ? 5 : schedule" stripedRows>
+    <DataTable :value="schedule" stripedRows>
       <Column field="location" header="Location" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>

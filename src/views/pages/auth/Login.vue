@@ -43,7 +43,7 @@
 
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
@@ -83,10 +83,27 @@ async function login() {
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
   } catch (error) {
-    console.log(error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
   }
 }
+
+const requestNotificationsPermissions = async () => {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted');
+      } else {
+        console.log('Notification permission denied');
+      }
+    });
+  } else {
+    console.log('Notifications are not supported');
+  }
+}
+
+onMounted(() => {
+  requestNotificationsPermissions();
+});
 
 </script>
 

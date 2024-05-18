@@ -3,7 +3,7 @@
     <!-- <span class="p-text-secondary block mb-5">Fill out information.</span> -->
     <div class="flex align-items-center gap-3 mb-3">
       <label for="type" class="font-semibold w-6rem">Type</label>
-      <Dropdown v-model="garbageType" :options="garbageTypes" optionLabel="name" placeholder="Select a Garbage Type" class="w-full md:w-14rem" style="z-index: 1000;"  />
+      <Dropdown v-model="selectedGarbageType" :options="garbageTypes" optionLabel="name" placeholder="Select a Garbage Type" class="w-full md:w-14rem" style="z-index: 1000;"  />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="date" class="font-semibold w-6rem">Date</label>
@@ -39,7 +39,7 @@ const visible = ref(false);
 const date = ref();
 const location = ref();
 const note = ref();
-const garbageType = ref();
+const selectedGarbageType = ref();
 const garbageTypes = ref([
   { name: 'Plastic', value: 'plastic' },
   { name: 'Organic', value: 'organic' },
@@ -58,7 +58,7 @@ const showDialog = () => {
     date.value = editScheduleData.date;
     location.value = editScheduleData.location;
     note.value = editScheduleData.footnote;
-    garbageType.value = garbageTypes.value.find(type => type.value === editScheduleData.garbageType);
+    selectedGarbageType.value = garbageTypes.value.find(type => type.value === editScheduleData.garbageType);
   }
   visible.value = true
 }
@@ -68,7 +68,7 @@ const saveSchedule = async () => {
     let response;
     if (isEditing) {
       response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${editScheduleData._id}`, {
-        garbageType: garbageType.value.value,
+        garbageType: selectedGarbageType.value.value,
         location: location.value,
         footnote: note.value,
         frequency: 'monthly',
@@ -76,7 +76,7 @@ const saveSchedule = async () => {
       });
     } else {
       response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, {
-        garbageType: garbageType.value.value,
+        garbageType: selectedGarbageType.value.value,
         location: location.value,
         footnote: note.value,
         frequency: 'monthly',

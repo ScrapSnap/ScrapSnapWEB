@@ -13,13 +13,15 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('push', event => {
-    console.log('Service Worker push event:', event);
-    const payload = event.data ? event.data.text() : 'Default notification payload';
+    const payload = event.data.json();
+    if (!payload || !payload.notification) {
+        return;
+    }
 
     event.waitUntil(
-        self.registration.showNotification('Push Notification', {
-            body: payload,
-            icon: 'icons/icon-192x192.png',
+        self.registration.showNotification(payload.notification.title, {
+            body:  payload.notification.body,
+            icon: payload.notification.icon,
         })
     );
 });

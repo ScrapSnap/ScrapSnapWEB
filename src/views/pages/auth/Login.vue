@@ -49,6 +49,7 @@ import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from 'vue-router';
 import {useStore} from "@/store";
+import axiosInstance from "@/axios";
 
 const router = useRouter();
 const store = useStore();
@@ -82,6 +83,7 @@ async function login() {
     await store.login(response.data.token, response.data.user);
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
+    subscribeToPushNotifications();
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
   }
@@ -99,6 +101,30 @@ const requestNotificationsPermissions = async () => {
   } else {
     console.log('Notifications are not supported');
   }
+}
+
+const subscribeToPushNotifications = async () => {
+  try {
+    const registration = await navigator.serviceWorker.register('service-worker.js');
+
+    if ('PushManager' in window) {
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array('BM9rzW6qYVBYn8fsaRC9BCRJ7KeJve23aZmgNOaVcP-vhcIMBB9UbCXlk_jTA59VnVRJvzxf4VKp08dHPa9TFqo')
+      });
+
+      await axiosInstance.post(`${import.meta.env.VITE_API_BASE_URL}/subscriptions`, subscription);
+    }
+  } catch (error) {
+    console.error('Service Worker registration failed:', error);
+  }
+}
+
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
 
 onMounted(() => {

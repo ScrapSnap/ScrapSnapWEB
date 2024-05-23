@@ -1,15 +1,6 @@
 <template>
   <div>
     <!-- DataCards for summary statistics -->
-    <!--
-        <div class="grid">
-          <DataCard type="Total" :count="summary.total" icon="pi-chart-line" />
-          <DataCard type="Avg" :count="summary.avg" icon="pi-chart-bar" />
-          <DataCard type="Max" :count="summary.max" icon="pi-chart-line" />
-          <DataCard type="Min" :count="summary.min" icon="pi-chart-line" />
-          <DataCard type="Count" :count="summary.count" icon="pi-chart-line" />
-        </div>
-    -->
     <div class="grid">
       <DataCard
         v-for="(item, index) in summary"

@@ -14,10 +14,6 @@
         </div>
 
       </div>
-      <!--
-          <span class="text-green-500 font-medium">{{ newCount }} new </span>
-          <span class="text-500">since last visit</span>
-      -->
     </div>
   </div>
 </template>

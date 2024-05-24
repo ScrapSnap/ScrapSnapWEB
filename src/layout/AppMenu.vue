@@ -9,7 +9,6 @@ const model = ref([
         items: [
             { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Schedule', icon: 'pi pi-fw pi-calendar', to: '/schedule'},
-            { label: 'Statistics', icon: 'pi pi-fw pi-chart-bar', to: '/stats' }
         ]
     },
     {

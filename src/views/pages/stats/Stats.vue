@@ -56,36 +56,9 @@ export default {
     };
   },
   async mounted() {
-    const user = localStorage.getItem('user')
-    const { _id } = JSON.parse(user);
-    const token = localStorage.getItem('token');
-
-    if (_id && token) {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/stats/user/${_id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the headers
-          },
-        });
-
-        console.log('Data:', response.data);
-
-        // Extracting data from response
-        const data = response.data[0]
-
-        // Save data to local storage
-        localStorage.setItem('garbageData', JSON.stringify(data));
-
-        this.processData(data);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        this.loadFromLocalStorage();
-      }
-    } else {
-      console.error('_id or token not found in local storage');
-      this.loadFromLocalStorage();
-    }
+    this.setupKeyboardListeners();
+    this.getFreshData();
+    this.sendNotification('Data saved', 'Data saved to local storage');    
   },
   methods: {
     processData(data) {
@@ -229,6 +202,63 @@ export default {
       } else {
         console.error('No data found in local storage');
       }
+    },
+    sendNotification(title, body) {
+        if (Notification.permission === "granted") {
+            new Notification(title, { body });
+        }
+    },
+    setupKeyboardListeners() {
+      document.addEventListener('keydown', (e) => {
+        if (e.shiftKey && e.key === 'N') {
+          this.randomNotification();
+        }
+        if (e.shiftKey && e.key === 'R') {
+          this.getFreshData();
+          this.sendNotification('Data Refreshed', 'Data has been refreshed');
+        }
+      });
+    },
+    async getFreshData() {
+     const user = localStorage.getItem('user')
+    const { _id } = JSON.parse(user);
+    const token = localStorage.getItem('token');
+
+    if (_id && token) {
+      try {
+
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/stats/user/${_id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the headers
+          },
+        });
+
+        console.log('Data:', response.data);
+  
+        // Extracting data from response
+        const data = response.data[0]
+  
+        // Save data to local storage
+        localStorage.setItem('garbageData', JSON.stringify(data));
+
+        this.processData(data);
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        this.loadFromLocalStorage();
+      }
+    } else {
+      console.error('_id or token not found in local storage');
+      this.loadFromLocalStorage();
+    }
+    },
+    randomNotification() {
+      // get a random stat from the summary
+      const randomIndex = Math.floor(Math.random() * this.summary.length);
+      const { type, count } = this.summary[randomIndex];
+      const title = `Random Stat: ${type}`;
+      const body = `Count: ${count}`;
+      this.sendNotification(title, body);
     },
   },
 };

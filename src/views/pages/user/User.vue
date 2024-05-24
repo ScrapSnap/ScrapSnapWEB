@@ -18,7 +18,7 @@
           <InputText v-model="email" id="email1" type="text" />
         </div>
         <br />
-        <Button @click="updateUserData" label="Save"></Button>
+        <Button @click="updateUserData" :loading="isLoadingUpdateProfile" label="Save"></Button>
       </div>
 
       <div class="card p-fluid">
@@ -52,7 +52,7 @@
           </div>
         </div>
         <br />
-        <Button @click="updateUserPassword" label="Change"></Button>
+        <Button @click="updateUserPassword" :loading="isLoadingPassword" label="Change"></Button>
       </div>
     </div>
   </div>
@@ -72,6 +72,8 @@ const lastname = ref('');
 const email = ref('');
 const currentPassword = ref('');
 const newPassword = ref('');
+const isLoadingUpdateProfile = ref(false);
+const isLoadingPassword = ref(false);
 
 onMounted(() => {
   const user = store.getUser();
@@ -87,6 +89,8 @@ onMounted(() => {
 });
 
 const updateUserData = async () => {
+  isLoadingUpdateProfile.value = true;
+
   const userId = store.getUser()._id;
   const user = {
     firstname: name.value,
@@ -105,6 +109,8 @@ const updateUserData = async () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'User data updated', life: 3000 });
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Oops', detail: 'Something went wrong...', life: 3000 });
+  } finally {
+    isLoadingUpdateProfile.value = false;
   }
 }
 
@@ -113,6 +119,8 @@ const updateUserPassword = async () => {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Password must be at least 6 characters long', life: 3000 });
     return;
   }
+
+  isLoadingPassword.value = true;
 
   const userId = store.getUser()._id;
   const updatePasswordData = {
@@ -133,6 +141,7 @@ const updateUserPassword = async () => {
   } finally {
     currentPassword.value = '';
     newPassword.value = '';
+    isLoadingPassword.value = false;
   }
 }
 

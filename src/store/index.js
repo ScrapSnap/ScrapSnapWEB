@@ -25,10 +25,12 @@ export const useStore = defineStore('app', () => {
 
     const setUser = (newUser) => {
         user.value = newUser;
+        localStorage.setItem('user', JSON.stringify(newUser));
     }
 
     const setLoggedIn = (newLoggedIn) => {
         loggedIn.value = newLoggedIn;
+        localStorage.setItem('loggedIn', newLoggedIn);
     }
 
     // getters

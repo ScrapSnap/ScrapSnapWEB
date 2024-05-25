@@ -7,21 +7,22 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
-            path: '/',
+            path: "/",
             component: AppLayout,
             children: [
                 {
-                    path: '/',
-                    name: 'dashboard',
-                    component: () => import('@/views/pages/Empty.vue'),
+                    path: "/",
+                    name: "dashboard",
+                    component: () => import("@/views/pages/stats/Stats.vue"),
                     meta: {
-                        requiredAuth: true
-                    }
+                        requiredAuth: true,
+                    },
                 },
                 {
-                    path: '/schedule',
-                    name: 'schedule',
-                    component: () => import('@/views/pages/schedule/Schedule.vue'),
+                    path: "/schedule",
+                    name: "schedule",
+                    component: () =>
+                        import("@/views/pages/schedule/Schedule.vue"),
                     meta: {
                         requiredAuth: true
                     }
@@ -53,35 +54,35 @@ const router = createRouter({
             ]
         },
         {
-            path: '/pages/notfound',
-            name: 'notfound',
-            component: () => import('@/views/pages/NotFound.vue')
+            path: "/pages/notfound",
+            name: "notfound",
+            component: () => import("@/views/pages/NotFound.vue"),
         },
         {
-            path: '/auth/login',
-            name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
+            path: "/auth/login",
+            name: "login",
+            component: () => import("@/views/pages/auth/Login.vue"),
         },
         {
-            path: '/auth/register',
-            name: 'register',
-            component: () => import('@/views/pages/auth/Register.vue')
+            path: "/auth/register",
+            name: "register",
+            component: () => import("@/views/pages/auth/Register.vue"),
         },
         {
-            path: '/auth/access',
-            name: 'accessDenied',
-            component: () => import('@/views/pages/auth/Access.vue')
+            path: "/auth/access",
+            name: "accessDenied",
+            component: () => import("@/views/pages/auth/Access.vue"),
         },
         {
-            path: '/auth/error',
-            name: 'error',
-            component: () => import('@/views/pages/auth/Error.vue')
+            path: "/auth/error",
+            name: "error",
+            component: () => import("@/views/pages/auth/Error.vue"),
         },
         {
-            path: '/:catchAll(.*)',
-            redirect: { name: 'notfound' }
-        }
-    ]
+            path: "/:catchAll(.*)",
+            redirect: { name: "notfound" },
+        },
+    ],
 });
 
 router.beforeEach((to, from, next) => {

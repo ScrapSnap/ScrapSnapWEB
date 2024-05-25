@@ -1,9 +1,11 @@
 <template>
-  <Dialog v-model:visible="visible" modal :header="dialogHeader" :draggable="false" :style="{ width: '40rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+  <Dialog v-model:visible="visible" modal :header="dialogHeader" :draggable="false" :style="{ width: '40rem' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
     <!-- <span class="p-text-secondary block mb-5">Fill out information.</span> -->
     <div class="flex align-items-center gap-3 mb-3">
       <label for="type" class="font-semibold w-6rem">Type</label>
-      <Dropdown v-model="selectedGarbageType" :options="garbageTypes" optionLabel="name" placeholder="Select a Garbage Type" class="w-full md:w-14rem" style="z-index: 1000;"  />
+      <Dropdown v-model="selectedGarbageType" :options="garbageTypes" optionLabel="name"
+        placeholder="Select a Garbage Type" class="w-full md:w-14rem" style="z-index: 1000;" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="date" class="font-semibold w-6rem">Date</label>
@@ -27,15 +29,35 @@
 </template>
 
 <script setup>
-const { isEditing, editScheduleData } = defineProps(['isEditing', 'editScheduleData']);
+const props = defineProps({
+  isEditing: {
+    type: Object,
+    default: false
+  },
+  editScheduleData: {
+    type: Object,
+    default: null
+  }
+});
 
-import {ref} from "vue";
+import { ref, watch } from "vue";
 import axios from "@/axios";
-import {useToast} from "primevue/usetoast";
+import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 
+watch(props, (newProps, oldProps) => {
+  if (newProps.isEditing && newProps.editScheduleData) {
+    isEditing.value = newProps.isEditing;
+    date.value = newProps.editScheduleData.date;
+    location.value = newProps.editScheduleData.location;
+    note.value = newProps.editScheduleData.footnote;
+    selectedGarbageType.value = garbageTypes.value.find(type => type.value === newProps.editScheduleData.garbageType);
+  }
+});
+
 const visible = ref(false);
+const isEditing = ref(false);
 const date = ref();
 const location = ref();
 const note = ref();
@@ -50,24 +72,22 @@ const garbageTypes = ref([
 
 const emit = defineEmits(['added']);
 
-const dialogHeader = isEditing === true ? 'Edit Schedule' : 'New Schedule';
-const dialogButtonLabel = isEditing === true? 'Update' : 'Save';
+const dialogHeader = ref('New Schedule');
+const dialogButtonLabel = ref('Save');
 
 const showDialog = () => {
-  if (isEditing === true && editScheduleData) {
-    date.value = editScheduleData.date;
-    location.value = editScheduleData.location;
-    note.value = editScheduleData.footnote;
-    selectedGarbageType.value = garbageTypes.value.find(type => type.value === editScheduleData.garbageType);
-  }
   visible.value = true
 }
 
 const saveSchedule = async () => {
   try {
+    console.log(props.isEditing)
+    console.log(props.editScheduleData)
+    console.log(props.editScheduleData._id)
     let response;
-    if (isEditing) {
-      response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${editScheduleData._id}`, {
+    if (isEditing.value) {
+      const scheduleId = props.editScheduleData._id;
+      response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${scheduleId}`, {
         garbageType: selectedGarbageType.value.value,
         location: location.value,
         footnote: note.value,
@@ -102,6 +122,4 @@ defineExpose({
 })
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

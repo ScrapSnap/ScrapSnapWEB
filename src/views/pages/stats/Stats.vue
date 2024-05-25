@@ -21,10 +21,10 @@
     <!-- DataTable for detailed garbage collection data -->
     <DataTable :value="garbageData" responsiveLayout="scroll">
     <Column field="type" header="Type"></Column>
-    <Column field="total" header="Total"></Column>
-    <Column field="avg" header="Avg"></Column>
-    <Column field="max" header="Max"></Column>
-    <Column field="min" header="Min"></Column>
+    <Column field="total" header="Total (kg)"></Column>
+    <Column field="avg" header="Avg (kg)"></Column>
+    <Column field="max" header="Max (kg)"></Column>
+    <Column field="min" header="Min (kg)"></Column>
     </DataTable>
 
   </div>
@@ -58,15 +58,14 @@ export default {
   async mounted() {
     this.setupKeyboardListeners();
     this.getFreshData();
-    this.sendNotification('Data saved', 'Data saved to local storage');    
   },
   methods: {
     processData(data) {
          this.summary = [
             { type: 'Total', count: data.total, icon: 'pi-chart-line' },
-            { type: 'Avg', count: data.avg, icon: 'pi-chart-bar' },
-            { type: 'Max', count: data.max, icon: 'pi-chart-line' },
-            { type: 'Min', count: data.min, icon: 'pi-chart-line' },
+            { type: 'Avg', count: data.avg, icon: 'pi-arrows-v' },
+            { type: 'Max', count: data.max, icon: 'pi-arrow-up' },
+            { type: 'Min', count: data.min, icon: 'pi-arrow-down' },
             //{ type: 'Count', count: data.count, icon: 'pi-chart-line' },
         ];
         
@@ -246,6 +245,7 @@ export default {
       } catch (error) {
         console.error('Error fetching data:', error);
         this.loadFromLocalStorage();
+        this.sendNotification('Your are offline', 'Data may be outdated');
       }
     } else {
       console.error('_id or token not found in local storage');

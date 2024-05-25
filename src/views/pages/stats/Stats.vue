@@ -232,7 +232,7 @@ export default {
           },
         });
 
-        console.log('Data:', response.data);
+        //console.log('Data:', response.data);
   
         // Extracting data from response
         const data = response.data[0]

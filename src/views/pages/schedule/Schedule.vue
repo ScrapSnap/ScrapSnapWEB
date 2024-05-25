@@ -29,20 +29,23 @@
       <Column field="garbageType" header="Garbage Type" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
-          <Tag v-else :value="data.garbageType" :style="{ backgroundColor: getGarbageTypeColor(data.garbageType) }"></Tag>
+          <Tag v-else :value="data.garbageType" :style="{ backgroundColor: getGarbageTypeColor(data.garbageType) }">
+          </Tag>
         </template>
       </Column>
       <Column header="Actions">
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
-          <Button icon="pi pi-pencil" @click="showEditScheduleDialog(data)" severity="warning" class="mr-1" aria-label="Info" />
+          <Button icon="pi pi-pencil" @click="showEditScheduleDialog(data)" severity="warning" class="mr-1"
+            aria-label="Info" />
           <Button icon="pi pi-trash" @click="deleteSchedule(data)" severity="danger" class="ml-1" aria-label="Delete" />
         </template>
       </Column>
     </DataTable>
 
     <Toast />
-    <AddSchedule ref="addScheduleDialog" :isEditing="isEditing" :editScheduleData="editScheduleData" @added="loadSchedule" />
+    <AddSchedule ref="addScheduleDialog" :isEditing="isEditing" :editScheduleData="editScheduleData"
+      @added="onlineCheck" />
   </div>
 </template>
 
@@ -60,42 +63,124 @@ const addScheduleDialog = ref();
 const isEditing = ref(false);
 const editScheduleData = ref(null);
 
-onMounted(() => {
-    loadSchedule();
+
+onMounted(async () => {
+  window.addEventListener('online',
+    async () => {
+      await syncLocalToServer();
+    });
+
+  await onlineCheck();
+  
 });
+
+const onlineCheck = async () => {
+  if (navigator.onLine) {
+    await loadSchedule();
+  } else {
+    loadScheduleFromLocalStorage();
+  }
+}	
+
 
 const loadSchedule = async () => {
   loading.value = true;
-
   try {
+    
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/schedules`);
 
     if (!response.data) {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
-
     schedule.value = response.data;
+    
+    localStorage.removeItem('localSchedules');
+    
+    localStorage.setItem('localSchedules', JSON.stringify(response.data));
+    
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
 
-const deleteSchedule = async (data) => {
-  try {
-    const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/schedules/${data._id}`);
+const syncLocalToServer = async () => {
 
-    if (!response.data) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
-      return;
+
+  if (localStorage.getItem('localSchedules') === null) {
+
+    await loadSchedule();
+
+  } else {
+
+    const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+
+    localSchedules.forEach(schedule => {
+      delete schedule._id;
+      delete schedule.dateAdded;
+    });
+
+    if (localSchedules.length > 0) {
+      try {
+        schedule.value = [];
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules/replace-all`, localSchedules);
+
+        console.log('Sync response', response);
+
+        if (!response.data) {
+          toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+          return;
+        }
+
+        schedule.value = response.data;
+
+        localStorage.removeItem('localSchedules');
+
+        localStorage.setItem('localSchedules', JSON.stringify(response.data));
+
+      } catch (error) {
+        console.error('Sync failed for', localSchedules, error);
+      }
+
     }
+  }
+};
 
-    toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully deleted', life: 3000 });
-    loadSchedule();
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+const loadScheduleFromLocalStorage = async () => {
+  loading.value = true;
+  const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+  schedule.value = localSchedules;
+  loading.value = false;
+};
+
+const deleteSchedule = async (data) => {
+
+  if (!navigator.onLine) {
+    let localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+    localSchedules = localSchedules.filter(schedule => schedule._id !== data._id);
+    localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'Deleted locally, will sync when online', life: 3000 });
+    loadScheduleFromLocalStorage();
+    return;
+  }
+  else {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/schedules/${data._id}`);
+
+      if (!response.data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+        return;
+      }
+
+      toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully deleted', life: 3000 });
+      loadSchedule();
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+    }
   }
 }
 

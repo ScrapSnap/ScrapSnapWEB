@@ -31,7 +31,7 @@
 <script setup>
 const props = defineProps({
   isEditing: {
-    type: Object,
+    type: Boolean,
     default: false
   },
   editScheduleData: {
@@ -40,7 +40,7 @@ const props = defineProps({
   }
 });
 
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import axios from "@/axios";
 import { useToast } from "primevue/usetoast";
 
@@ -72,12 +72,198 @@ const garbageTypes = ref([
 
 const emit = defineEmits(['added']);
 
-const dialogHeader = ref('New Schedule');
-const dialogButtonLabel = ref('Save');
+let dialogHeader = ref('Add Schedule')
+let dialogButtonLabel = ref('Save')
 
 const showDialog = () => {
   visible.value = true
 }
+/*
+const saveSchedule = async () => {
+  const newSchedule = {
+    garbageType: selectedGarbageType.value,
+    location: location.value,
+    footnote: note.value,
+    frequency: 'monthly',
+    date: date.value,
+  };
+
+  if (navigator.onLine) {
+    try {
+      let response;
+
+
+      console.log(isEditing.value)
+      console.log(editScheduleData.value)
+
+
+      if (isEditing.value) {
+        response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${editScheduleData._id}`, newSchedule);
+      } else {
+        response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, newSchedule);
+      }
+
+      if (!response.data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+        return;
+      }
+
+      toast.add({ severity: 'success', summary: 'Success Message', detail: isEditing ? 'Successfully updated' : 'Successfully scheduled', life: 3000 });
+      emit('added');
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      console.error(error)
+    }
+  } else {
+    if (isEditing.value) {
+      const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+      const index = localSchedules.findIndex(schedule => schedule._id === editScheduleData._id);
+      localSchedules[index] = newSchedule;
+      localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+      toast.add({ severity: 'warn', summary: 'Offline', detail: 'Updated locally, will sync when online', life: 3000 });
+    } else {
+      const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+      localSchedules.push(newSchedule);
+      localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+      toast.add({ severity: 'warn', summary: 'Offline', detail: 'Saved locally, will sync when online', life: 3000 });
+    }
+  }
+
+  visible.value = false;
+}
+*/
+
+
+const saveSchedule = async () => {
+
+  if (!selectedGarbageType.value || !date.value || !location.value) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Please fill out all fields', life: 3000 });
+    return;
+  }
+
+  if (navigator.onLine) {
+    saveOnline();
+  } else {
+    saveOffline();
+  }
+
+}
+
+const saveOnline = async () => {
+
+  try {
+    //console.log(props.isEditing)
+    //console.log(props.editScheduleData)
+    //console.log(props.editScheduleData._id)
+    let response;
+    if (isEditing.value) {
+      const scheduleId = props.editScheduleData._id;
+      response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${scheduleId}`, {
+        garbageType: selectedGarbageType.value.value,
+        location: location.value,
+        footnote: note.value,
+        frequency: 'monthly',
+        date: date.value,
+      });
+    } else {
+      response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, {
+        garbageType: selectedGarbageType.value.value,
+        location: location.value,
+        footnote: note.value,
+        frequency: 'monthly',
+        date: date.value,
+      });
+    }
+
+    if (!response.data) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      return;
+    }
+
+    toast.add({ severity: 'success', summary: 'Success Message', detail: isEditing === true ? 'Successfully updated' : 'Successfully scheduled', life: 3000 });
+    visible.value = false;
+    emit('added')
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+    console.error(error)
+  }
+}
+
+const saveOffline = async () => {
+  const newSchedule = {
+    garbageType: selectedGarbageType.value.value,
+    location: location.value,
+    footnote: note.value,
+    frequency: 'monthly',
+    date: date.value,
+    _id: Math.random().toString(36).substr(2, 9)
+  }
+
+  if (isEditing.value) {
+    const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+    const index = localSchedules.findIndex(schedule => schedule._id === editScheduleData._id);
+    localSchedules[index] = newSchedule;
+    localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'Updated locally, will sync when online', life: 3000 });
+  } else {
+    const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+    localSchedules.push(newSchedule);
+    localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'Saved locally, will sync when online', life: 3000 });
+  }
+  emit('added');
+  visible.value = false;
+}
+
+
+/*
+//rewrite saveSchedule function to use localstorage and sync when online
+const saveSchedule = async () => {
+  const newSchedule = {
+    garbageType: selectedGarbageType.value.value,
+    location: location.value,
+    footnote: note.value,
+    frequency: 'monthly',
+    date: date.value,
+  };
+
+  if (navigator.onLine) {
+    try {
+      let response;
+      if (isEditing) {
+        response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${editScheduleData._id}`, newSchedule);
+      } else {
+        response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, newSchedule);
+      }
+
+      if (!response.data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+        return;
+      }
+
+      toast.add({ severity: 'success', summary: 'Success Message', detail: isEditing ? 'Successfully updated' : 'Successfully scheduled', life: 3000 });
+      emit('added');
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+    }
+  } else {
+    if (isEditing) {
+      const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+      const index = localSchedules.findIndex(schedule => schedule._id === editScheduleData._id);
+      localSchedules[index] = newSchedule;
+      localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+      toast.add({ severity: 'warn', summary: 'Offline', detail: 'Updated locally, will sync when online', life: 3000 });
+    } else {
+      const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+      localSchedules.push(newSchedule);
+      localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+      toast.add({ severity: 'warn', summary: 'Offline', detail: 'Saved locally, will sync when online', life: 3000 });
+    }
+  }
+
+  visible.value = false;
+}
+
 
 const saveSchedule = async () => {
   try {
@@ -116,6 +302,91 @@ const saveSchedule = async () => {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
   }
 }
+*/
+
+
+////////////////
+
+/*
+const saveSchedule = async () => {
+  try {
+    console.log(props.isEditing)
+    console.log(props.editScheduleData)
+    console.log(props.editScheduleData._id)
+    let response;
+    if (isEditing.value) {
+      const scheduleId = props.editScheduleData._id;
+      response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${scheduleId}`, {
+        garbageType: selectedGarbageType.value.value,
+        location: location.value,
+        footnote: note.value,
+        frequency: 'monthly',
+        date: date.value,
+      });
+    } else {
+      response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, {
+        garbageType: selectedGarbageType.value.value,
+        location: location.value,
+        footnote: note.value,
+        frequency: 'monthly',
+        date: date.value,
+      });
+    }
+
+    if (!response.data) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      return;
+    }
+
+    toast.add({ severity: 'success', summary: 'Success Message', detail: isEditing === true ? 'Successfully updated' : 'Successfully scheduled', life: 3000 });
+    visible.value = false;
+    emit('added')
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+  }
+}
+*
+
+/*
+const saveSchedule = async () => {
+  const newSchedule = {
+    garbageType: selectedGarbageType.value.value,
+    location: location.value,
+    footnote: note.value,
+    frequency: 'monthly',
+    date: date.value,
+  };
+
+  if (navigator.onLine) {  // Modified this part
+    try {
+      let response;
+      if (isEditing) {
+        response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${editScheduleData._id}`, newSchedule);
+      } else {
+        response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, newSchedule);
+      }
+
+      if (!response.data) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+        return;
+      }
+
+      toast.add({ severity: 'success', summary: 'Success Message', detail: isEditing ? 'Successfully updated' : 'Successfully scheduled', life: 3000 });
+      emit('added');
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+    }
+  } else {
+    // Save to local storage when offline
+    const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];  // Added this part
+    localSchedules.push(newSchedule);
+    localStorage.setItem('localSchedules', JSON.stringify(localSchedules));
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'Saved locally, will sync when online', life: 3000 });
+  }
+
+  visible.value = false;
+}
+*/
 
 defineExpose({
   showDialog

@@ -24,10 +24,34 @@ const router = createRouter({
                     component: () =>
                         import("@/views/pages/schedule/Schedule.vue"),
                     meta: {
-                        requiredAuth: true,
-                    },
+                        requiredAuth: true
+                    }
                 },
-            ],
+                {
+                    path: '/inappropriate-disposal',
+                    name: 'inappropriate-disposal',
+                    component: () => import('@/views/pages/inappropriate-disposal/InappropriateDisposals.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/inappropriate-disposal/upload',
+                    name: 'upload-inappropriate-disposal',
+                    component: () => import('@/views/pages/inappropriate-disposal/UploadInappropriateDisposal.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/user',
+                    name: 'user',
+                    component: () => import('@/views/pages/user/User.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                }
+            ]
         },
         {
             path: "/pages/notfound",

@@ -12,6 +12,19 @@ const model = ref([
         ]
     },
     {
+      label: 'Inappropriate Disposals',
+      items: [
+        { label: 'Inappropriate Disposals', icon: 'pi pi-fw pi-trash', to: '/inappropriate-disposal' },
+        { label: 'Upload', icon: 'pi pi-fw pi-upload', to: '/inappropriate-disposal/upload' }
+      ]
+    },
+    {
+      label: 'User',
+      items: [
+        { label: 'Profile', icon: 'pi pi-user', to: '/user' },
+      ]
+    },
+    {
         label: 'Pages',
         icon: 'pi pi-fw pi-briefcase',
         to: '/pages',

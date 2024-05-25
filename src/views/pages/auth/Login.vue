@@ -48,7 +48,7 @@ import AppConfig from '@/layout/AppConfig.vue';
 import axios from "axios";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from 'vue-router';
-import {useStore} from "@/store";
+import { useStore } from "@/store";
 import axiosInstance from "@/axios";
 
 const router = useRouter();
@@ -134,13 +134,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pi-eye {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
 
-.pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
 </style>

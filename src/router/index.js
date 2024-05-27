@@ -28,6 +28,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/collection-points',
+                    name: 'collection-points',
+                    component: () => import('@/views/pages/collection-points/CollectionPoints.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
                     path: '/inappropriate-disposal',
                     name: 'inappropriate-disposal',
                     component: () => import('@/views/pages/inappropriate-disposal/UploadInappropriateDisposal.vue'),
@@ -50,6 +58,15 @@ const router = createRouter({
                     meta: {
                         requiredAuth: true,
                         requiredPermissions: [permissions.ReadUsers]
+                    }
+                },
+                {
+                    path: '/roles',
+                    name: 'roles',
+                    component: () => import('@/views/pages/roles/Roles.vue'),
+                    meta: {
+                        requiredAuth: true,
+                        requiredPermissions: [permissions.WriteUsers]
                     }
                 },
                 {

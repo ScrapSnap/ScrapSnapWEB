@@ -66,7 +66,7 @@ const isOutsideClicked = (event) => {
 const settingsMenuItems = ref([
     {
         label: 'Profile',
-        icon: 'pi pi-user'
+        icon: 'pi pi-users'
     },
     {
         separator: true

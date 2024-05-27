@@ -76,7 +76,8 @@ async function register() {
       firstname: firstname.value,
       lastname: lastname.value,
       email: email.value,
-      password: password.value
+      password: password.value,
+      roleId: '',
     });
 
     if (!response.data) {

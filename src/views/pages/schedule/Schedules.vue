@@ -3,7 +3,7 @@
     <h5>Scheduled Waste Collections</h5>
     <p>Use this page to start from scratch and place your custom content.</p>
 
-    <div class="w-full flex justify-content-end mb-3">
+    <div v-if="hasWriteSchedulePermission" class="w-full flex justify-content-end mb-3">
       <Button label="New Schedule" icon="pi pi-plus" @click="showAddScheduleDialog" />
     </div>
 
@@ -23,7 +23,7 @@
       <Column field="frequency" header="Frequency" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
-          <span v-else>{{ data.frequency }}</span>
+          <Tag v-else :value="data.frequency" :style="{ backgroundColor: getFrequencyColor(data.frequency) }"></Tag>
         </template>
       </Column>
       <Column field="garbageType" header="Garbage Type" sortable>
@@ -32,7 +32,7 @@
           <Tag v-else :value="data.garbageType" :style="{ backgroundColor: getGarbageTypeColor(data.garbageType) }"></Tag>
         </template>
       </Column>
-      <Column header="Actions">
+      <Column v-if="hasWriteSchedulePermission" header="Actions">
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
           <Button icon="pi pi-pencil" @click="showEditScheduleDialog(data)" severity="warning" class="mr-1" aria-label="Info" />
@@ -42,23 +42,27 @@
     </DataTable>
 
     <Toast />
-    <AddSchedule ref="addScheduleDialog" :isEditing="isEditing" :editScheduleData="editScheduleData" @added="loadSchedule" />
+    <AddSchedule ref="addScheduleDialog" @added="loadSchedule" />
+    <EditSchedule ref="editScheduleDialog" @updated="loadSchedule" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
-import {useToast} from "primevue/usetoast";
+import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
+import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
+import { hasPermission, permissions } from "@/permissions";
+
+const hasWriteSchedulePermission = hasPermission(permissions.WriteSchedules);
 
 const toast = useToast();
 
 const loading = ref(true);
 const schedule = ref([]);
 const addScheduleDialog = ref();
-const isEditing = ref(false);
-const editScheduleData = ref(null);
+const editScheduleDialog = ref();
 
 onMounted(() => {
     loadSchedule();
@@ -121,6 +125,25 @@ const getGarbageTypeColor = (garbageType) => {
   }
 }
 
+const getFrequencyColor = (frequency) => {
+  switch (frequency) {
+    case 'daily':
+      return '#fdd85d';
+
+    case 'weekly':
+      return '#adb5bd';
+
+    case 'monthly':
+      return '#00b4d8';
+
+    case 'yearly':
+      return '#f17b00';
+
+    default:
+      return '#48cae4';
+  }
+}
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -128,15 +151,11 @@ const formatDate = (dateString) => {
 }
 
 const showAddScheduleDialog = () => {
-  isEditing.value = false;
-  editScheduleData.value = null;
   addScheduleDialog.value.showDialog()
 }
 
 const showEditScheduleDialog = (data) => {
-  isEditing.value = true;
-  editScheduleData.value = data;
-  addScheduleDialog.value.showDialog()
+  editScheduleDialog.value.showDialog(data);
 }
 </script>
 

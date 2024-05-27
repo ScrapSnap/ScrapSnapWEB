@@ -11,7 +11,7 @@ const nestedMenuitems = ref([
         items: [
             {
                 label: 'New',
-                icon: 'pi pi-fw pi-user-plus',
+                icon: 'pi pi-fw pi-users-plus',
                 items: [
                     {
                         label: 'Customer',
@@ -25,7 +25,7 @@ const nestedMenuitems = ref([
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-user-edit'
+                icon: 'pi pi-fw pi-users-edit'
             }
         ]
     },
@@ -63,7 +63,7 @@ const nestedMenuitems = ref([
     },
     {
         label: 'Profile',
-        icon: 'pi pi-fw pi-user',
+        icon: 'pi pi-fw pi-users',
         items: [
             {
                 label: 'Settings',
@@ -107,7 +107,7 @@ const tieredMenuItems = ref([
         items: [
             {
                 label: 'New',
-                icon: 'pi pi-fw pi-user-plus',
+                icon: 'pi pi-fw pi-users-plus',
                 items: [
                     {
                         label: 'Customer',
@@ -121,7 +121,7 @@ const tieredMenuItems = ref([
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-user-edit'
+                icon: 'pi pi-fw pi-users-edit'
             }
         ]
     },
@@ -159,7 +159,7 @@ const tieredMenuItems = ref([
     },
     {
         label: 'Profile',
-        icon: 'pi pi-fw pi-user',
+        icon: 'pi pi-fw pi-users',
         items: [
             {
                 label: 'Settings',
@@ -210,7 +210,7 @@ const menuitems = ref([
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-user-edit'
+                icon: 'pi pi-fw pi-users-edit'
             }
         ]
     },
@@ -364,7 +364,7 @@ const panelMenuitems = ref([
         items: [
             {
                 label: 'New',
-                icon: 'pi pi-fw pi-user-plus',
+                icon: 'pi pi-fw pi-users-plus',
                 items: [
                     {
                         label: 'Customer',
@@ -378,7 +378,7 @@ const panelMenuitems = ref([
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-user-edit'
+                icon: 'pi pi-fw pi-users-edit'
             }
         ]
     },
@@ -416,7 +416,7 @@ const panelMenuitems = ref([
     },
     {
         label: 'Profile',
-        icon: 'pi pi-fw pi-user',
+        icon: 'pi pi-fw pi-users',
         items: [
             {
                 label: 'Settings',

@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref } from "vue";
+import axios from "@/axios";
 
 export const useStore = defineStore('app', () => {
     const token = ref(null)
     const user = ref(null)
     const loggedIn = ref(false)
+    const userPermissions = ref([])
 
     // actions
     const login = (newToken, newUser) => {
@@ -19,8 +21,11 @@ export const useStore = defineStore('app', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('loggedIn');
+        localStorage.removeItem('permissions');
         token.value = null;
         user.value = null;
+        loggedIn.value = false;
+        userPermissions.value = [];
     }
 
     const setUser = (newUser) => {
@@ -33,6 +38,16 @@ export const useStore = defineStore('app', () => {
         localStorage.setItem('loggedIn', newLoggedIn);
     }
 
+    const updateUserPermissions = async () => {
+        await axios.get(`${import.meta.env.VITE_API_BASE_URL}/permissions`)
+            .then(response => {
+                userPermissions.value = response.data
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
     // getters
     const isAuthenticated = () => token.value !== null
 
@@ -43,6 +58,7 @@ export const useStore = defineStore('app', () => {
         logout,
         setUser,
         setLoggedIn,
+        updateUserPermissions,
         isAuthenticated,
         getUser
     }

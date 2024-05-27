@@ -1572,7 +1572,7 @@ define(['exports'], (function (exports) { 'use strict';
         status: clonedResponse.status,
         statusText: clonedResponse.statusText
       };
-      // Apply any user modifications.
+      // Apply any users modifications.
       const modifiedResponseInit = modifier ? modifier(responseInit) : responseInit;
       // Create the new response from the body stream and `ResponseInit`
       // modifications. Note: not all browsers support the Response.body stream,

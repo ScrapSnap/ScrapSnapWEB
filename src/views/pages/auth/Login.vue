@@ -81,9 +81,11 @@ async function login() {
     }
 
     await store.login(response.data.token, response.data.user);
+    await store.updateUserPermissions();
+    subscribeToPushNotifications();
+
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
-    subscribeToPushNotifications();
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Wrong email or password', life: 3000 })
   }

@@ -23,7 +23,7 @@
     </div>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-      <Button type="button" label="Save" @click="saveSchedule"></Button>
+      <Button type="button" label="Save" @click="updateSchedule"></Button>
     </div>
   </Dialog>
 
@@ -37,18 +37,10 @@ import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 
-watch(props, (newProps, oldProps) => {
-  if (newProps.isEditing && newProps.editScheduleData) {
-    isEditing.value = newProps.isEditing;
-    date.value = newProps.editScheduleData.date;
-    location.value = newProps.editScheduleData.location;
-    note.value = newProps.editScheduleData.footnote;
-    selectedGarbageType.value = garbageTypes.value.find(type => type.value === newProps.editScheduleData.garbageType);
-  }
-});
-
 const visible = ref(false);
 const emit = defineEmits(['added']);
+
+const scheduleId = ref();
 const date = ref();
 const location = ref();
 const note = ref();
@@ -70,16 +62,17 @@ const frequencies = ref([
   { name: 'Yearly', value: 'yearly' }
 ]);
 
-const showDialog = () => {
-  date.value = new Date();
-  location.value = '';
-  note.value = '';
-  selectedGarbageType.value = null;
-  selectedFrequency.value = null;
+const showDialog = (data) => {
+  scheduleId.value = data._id;
+  date.value = new Date(data.date);
+  location.value = data.location;
+  note.value = data.footnote;
+  selectedGarbageType.value = garbageTypes.value.find(garbage => garbage.value === data.garbageType);
+  selectedFrequency.value = frequencies.value.find(frequency => frequency.value === data.frequency);
   visible.value = true
 }
 
-const saveSchedule = async () => {
+const updateSchedule = async () => {
   if (!selectedGarbageType.value) {
     toast.add({ severity: 'info', summary: 'Info', detail: 'Please select a garbage type', life: 3000 });
     return;
@@ -91,7 +84,7 @@ const saveSchedule = async () => {
   }
 
   try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, {
+    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/schedules/${scheduleId.value}`, {
       garbageType: selectedGarbageType.value.value,
       location: location.value,
       footnote: note.value,
@@ -106,7 +99,7 @@ const saveSchedule = async () => {
 
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully scheduled', life: 3000 });
     visible.value = false;
-    emit('added')
+    emit('updated')
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
   }

@@ -46,6 +46,7 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 
 const visible = ref(false);
+const userId = ref('');
 const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
@@ -76,7 +77,7 @@ const updateUser = async () => {
   }
 
   try {
-    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/users`, {
+    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/users/${userId.value}`, {
       firstname: firstname.value,
       lastname: lastname.value,
       email: email.value,
@@ -98,6 +99,7 @@ const updateUser = async () => {
 }
 
 const showDialog = (user) => {
+  userId.value = user._id;
   firstname.value = user.firstname;
   lastname.value = user.lastname;
   email.value = user.email;

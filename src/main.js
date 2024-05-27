@@ -102,6 +102,9 @@ import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
 import BlockViewer from '@/components/BlockViewer.vue';
+import DataCard from './components/DataCard.vue';
+import GarbageChart from './components/GarbageChart.vue';
+import GarbageLineChart from './components/GarbageLineChart.vue';
 
 import '@/assets/styles.scss';
 
@@ -150,6 +153,9 @@ app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
 app.component('BlockViewer', BlockViewer);
+app.component('DataCard', DataCard);
+app.component('GarbageChart', GarbageChart)
+app.component('GarbageLineChart', GarbageLineChart)
 
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);

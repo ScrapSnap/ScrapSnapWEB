@@ -37,9 +37,18 @@ import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 
+watch(props, (newProps, oldProps) => {
+  if (newProps.isEditing && newProps.editScheduleData) {
+    isEditing.value = newProps.isEditing;
+    date.value = newProps.editScheduleData.date;
+    location.value = newProps.editScheduleData.location;
+    note.value = newProps.editScheduleData.footnote;
+    selectedGarbageType.value = garbageTypes.value.find(type => type.value === newProps.editScheduleData.garbageType);
+  }
+});
+
 const visible = ref(false);
 const emit = defineEmits(['added']);
-
 const date = ref();
 const location = ref();
 const note = ref();

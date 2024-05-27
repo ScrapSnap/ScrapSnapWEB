@@ -3,7 +3,7 @@
     <h5>Scheduled Waste Collections</h5>
     <p>Use this page to start from scratch and place your custom content.</p>
 
-    <div class="w-full flex justify-content-end mb-3">
+    <div v-if="hasWriteSchedulePermission" class="w-full flex justify-content-end mb-3">
       <Button label="New Schedule" icon="pi pi-plus" @click="showAddScheduleDialog" />
     </div>
 
@@ -32,7 +32,7 @@
           <Tag v-else :value="data.garbageType" :style="{ backgroundColor: getGarbageTypeColor(data.garbageType) }"></Tag>
         </template>
       </Column>
-      <Column header="Actions">
+      <Column v-if="hasWriteSchedulePermission" header="Actions">
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
           <Button icon="pi pi-pencil" @click="showEditScheduleDialog(data)" severity="warning" class="mr-1" aria-label="Info" />
@@ -53,6 +53,9 @@ import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
 import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
 import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
+import { hasPermission, permissions } from "@/permissions";
+
+const hasWriteSchedulePermission = hasPermission(permissions.WriteSchedules);
 
 const toast = useToast();
 

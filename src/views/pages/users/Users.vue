@@ -3,7 +3,7 @@
     <h5>Users</h5>
     <p>Use this page to start from scratch and place your custom content.</p>
 
-    <div class="w-full flex justify-content-end mb-3">
+    <div v-if="hasPermission(permissions.WriteUsers)" class="w-full flex justify-content-end mb-3">
       <Button label="New User" icon="pi pi-plus" @click="showAddUserDialog" />
     </div>
 
@@ -59,6 +59,7 @@ import AddUser from "@/views/pages/users/AddUser.vue";
 import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
 import EditUser from "@/views/pages/users/EditUser.vue";
+import { hasPermission, permissions } from "@/permissions";
 
 const toast = useToast();
 

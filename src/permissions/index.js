@@ -51,42 +51,36 @@ export function checkPermissions(requiredPermissions) {
     return false;
 }
 
+export function getPermissionLabel(permission) {
+    switch (permission) {
+        case permissions.ReadUsers:
+            return 'Read Users';
+        case permissions.WriteUsers:
+            return 'Write Users';
+        case permissions.DeleteUsers:
+            return 'Delete Users';
+        case permissions.WriteSchedules:
+            return 'Write Schedules';
+        case permissions.DeleteSchedules:
+            return 'Delete Schedules';
+        case permissions.WriteCollectionPoints:
+            return 'Write Collection Points';
+        case permissions.DeleteCollectionPoints:
+            return 'Delete Collection Points';
+        case permissions.ReadUserStatistics:
+            return 'Read User Statistics';
+        case permissions.WriteUserStatistics:
+            return 'Write User Statistics';
+        case permissions.DeleteUserStatistics:
+            return 'Delete User Statistics';
+    }
+}
+
 export function getPermissionLabels(permissions) {
     const permissionLabels = [];
 
     permissions.forEach(permission => {
-        switch (permission) {
-            case permissions.ReadUsers:
-                permissionLabels.push('Read Users');
-                break;
-            case permissions.WriteUsers:
-                permissionLabels.push('Write Users');
-                break;
-            case permissions.DeleteUsers:
-                permissionLabels.push('Delete Users');
-                break;
-            case permissions.WriteSchedules:
-                permissionLabels.push('Write Schedules');
-                break;
-            case permissions.DeleteSchedules:
-                permissionLabels.push('Delete Schedules');
-                break;
-            case permissions.WriteCollectionPoints:
-                permissionLabels.push('Write Collection Points');
-                break;
-            case permissions.DeleteCollectionPoints:
-                permissionLabels.push('Delete Collection Points');
-                break;
-            case permissions.ReadUserStatistics:
-                permissionLabels.push('Read User Statistics');
-                break;
-            case permissions.WriteUserStatistics:
-                permissionLabels.push('Write User Statistics');
-                break;
-            case permissions.DeleteUserStatistics:
-                permissionLabels.push('Delete User Statistics');
-                break;
-        }
+        permissionLabels.push(getPermissionLabel(permission));
     });
 
     return permissionLabels;

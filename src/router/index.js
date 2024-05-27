@@ -53,6 +53,15 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/roles',
+                    name: 'roles',
+                    component: () => import('@/views/pages/roles/Roles.vue'),
+                    meta: {
+                        requiredAuth: true,
+                        requiredPermissions: [permissions.WriteUsers]
+                    }
+                },
+                {
                     path: '/user-profile',
                     name: 'user',
                     component: () => import('@/views/pages/users/UserProfile.vue'),

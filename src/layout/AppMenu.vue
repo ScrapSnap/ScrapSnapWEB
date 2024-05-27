@@ -22,6 +22,7 @@ const model = ref([
       label: 'User',
       items: [
         { label: 'Users', icon: 'pi pi-fw pi-users', to: '/users' },
+        { label: 'Roles', icon: 'pi pi-fw pi-lock', to: '/roles' },
         { label: 'Profile', icon: 'pi pi-users', to: '/user-profile' },
       ]
     },

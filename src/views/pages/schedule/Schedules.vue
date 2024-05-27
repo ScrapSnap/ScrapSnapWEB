@@ -23,7 +23,7 @@
       <Column field="frequency" header="Frequency" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
-          <span v-else>{{ data.frequency }}</span>
+          <Tag v-else :value="data.frequency" :style="{ backgroundColor: getFrequencyColor(data.frequency) }"></Tag>
         </template>
       </Column>
       <Column field="garbageType" header="Garbage Type" sortable>
@@ -42,14 +42,16 @@
     </DataTable>
 
     <Toast />
-    <AddSchedule ref="addScheduleDialog" :isEditing="isEditing" :editScheduleData="editScheduleData" @added="loadSchedule" />
+    <AddSchedule ref="addScheduleDialog" @added="loadSchedule" />
+    <EditSchedule ref="editScheduleDialog" @updated="loadSchedule" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
-import {useToast} from "primevue/usetoast";
+import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
+import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
 
 const toast = useToast();
@@ -57,8 +59,7 @@ const toast = useToast();
 const loading = ref(true);
 const schedule = ref([]);
 const addScheduleDialog = ref();
-const isEditing = ref(false);
-const editScheduleData = ref(null);
+const editScheduleDialog = ref();
 
 onMounted(() => {
     loadSchedule();
@@ -121,6 +122,25 @@ const getGarbageTypeColor = (garbageType) => {
   }
 }
 
+const getFrequencyColor = (frequency) => {
+  switch (frequency) {
+    case 'daily':
+      return '#fdd85d';
+
+    case 'weekly':
+      return '#adb5bd';
+
+    case 'monthly':
+      return '#00b4d8';
+
+    case 'yearly':
+      return '#f17b00';
+
+    default:
+      return '#48cae4';
+  }
+}
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -128,15 +148,11 @@ const formatDate = (dateString) => {
 }
 
 const showAddScheduleDialog = () => {
-  isEditing.value = false;
-  editScheduleData.value = null;
   addScheduleDialog.value.showDialog()
 }
 
 const showEditScheduleDialog = (data) => {
-  isEditing.value = true;
-  editScheduleData.value = data;
-  addScheduleDialog.value.showDialog()
+  editScheduleDialog.value.showDialog(data);
 }
 </script>
 

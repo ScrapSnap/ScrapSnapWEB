@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 import { useStore } from '../store/index';
 import AuthService from "@/service/AuthService";
+import { checkPermissions, permissions } from "@/permissions";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -21,7 +22,7 @@ const router = createRouter({
                 {
                     path: '/schedule',
                     name: 'schedule',
-                    component: () => import('@/views/pages/schedule/Schedule.vue'),
+                    component: () => import('@/views/pages/schedule/Schedules.vue'),
                     meta: {
                         requiredAuth: true
                     }
@@ -43,9 +44,18 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/user',
+                    path: '/users',
+                    name: 'users',
+                    component: () => import('@/views/pages/users/Users.vue'),
+                    meta: {
+                        requiredAuth: true,
+                        requiredPermissions: [permissions.ReadUsers]
+                    }
+                },
+                {
+                    path: '/user-profile',
                     name: 'user',
-                    component: () => import('@/views/pages/user/User.vue'),
+                    component: () => import('@/views/pages/users/UserProfile.vue'),
                     meta: {
                         requiredAuth: true
                     }
@@ -101,6 +111,10 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.requiredAuth && !AuthService.isAuthenticated()) {
         return next('/auth/login')
+    }
+
+    if (to.meta.requiredPermissions && !checkPermissions(to.meta.requiredPermissions)) {
+        return next('/auth/access')
     }
 
     next()

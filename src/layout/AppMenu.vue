@@ -21,7 +21,8 @@ const model = ref([
     {
       label: 'User',
       items: [
-        { label: 'Profile', icon: 'pi pi-user', to: '/user' },
+        { label: 'Users', icon: 'pi pi-fw pi-users', to: '/users' },
+        { label: 'Profile', icon: 'pi pi-users', to: '/user-profile' },
       ]
     },
     {
@@ -31,7 +32,7 @@ const model = ref([
         items: [
             {
                 label: 'Auth',
-                icon: 'pi pi-fw pi-user',
+                icon: 'pi pi-fw pi-users',
                 items: [
                     {
                         label: 'Login',

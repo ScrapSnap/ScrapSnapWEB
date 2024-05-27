@@ -53,7 +53,7 @@ export function checkPermissions(requiredPermissions) {
 
 export function getPermissionLabels(permissions) {
     const permissionLabels = [];
-    
+
     permissions.forEach(permission => {
         switch (permission) {
             case permissions.ReadUsers:

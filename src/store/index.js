@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from "vue";
 import axios from "@/axios";
+import { jwtDecode } from "jwt-decode";
 
 export const useStore = defineStore('app', () => {
     const token = ref(null)
@@ -21,7 +22,6 @@ export const useStore = defineStore('app', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('loggedIn');
-        localStorage.removeItem('permissions');
         token.value = null;
         user.value = null;
         loggedIn.value = false;
@@ -53,7 +53,20 @@ export const useStore = defineStore('app', () => {
 
     const getUser = () => user.value
 
-    const getUserPermissions = () => userPermissions.value
+    const getUserPermissions = () => {
+        if (!userPermissions.value || userPermissions.value.length === 0) {
+            const token = localStorage.getItem('token');
+
+            try {
+                const decoded = jwtDecode(token);
+                userPermissions.value = decoded.permissions;
+            } catch {
+                return []
+            }
+        }
+
+        return userPermissions.value
+    }
 
     return {
         login,

@@ -102,6 +102,17 @@ const updateSchedule = async () => {
     emit('updated')
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+    
+    const schedules = JSON.parse(localStorage.getItem('localSchedules'));
+    const index = schedules.findIndex(schedule => schedule._id === scheduleId.value);
+    schedules[index] = {
+      _id: scheduleId.value,
+      garbageType: selectedGarbageType.value.value,
+      location: location.value,
+      footnote: note.value,
+      frequency: selectedFrequency.value.value,
+      date: date.value,
+    }
   }
 }
 

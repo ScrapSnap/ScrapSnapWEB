@@ -66,6 +66,7 @@ const editScheduleDialog = ref();
 
 onMounted(() => {
     loadSchedule();
+    window.addEventListener('online', 
 });
 
 const loadSchedule = async () => {
@@ -78,6 +79,8 @@ const loadSchedule = async () => {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
+
+    localStorage.setItem('localSchedules', JSON.stringify(response.data));   
 
     schedule.value = response.data;
   } catch (error) {
@@ -157,6 +160,24 @@ const showAddScheduleDialog = () => {
 const showEditScheduleDialog = (data) => {
   editScheduleDialog.value.showDialog(data);
 }
+
+const syncSchedules = () => {
+  const localSchedules = JSON.parse(localStorage.getItem('localSchedules'));
+  if (!localSchedules) {
+    return;
+  }
+
+  localSchedules.forEach(async (schedule) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules`, schedule);
+    } catch (error) {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+    }
+  });
+
+  localStorage.removeItem('localSchedules');
+}
+
 </script>
 
 <style scoped lang="scss">

@@ -99,6 +99,20 @@ const saveSchedule = async () => {
     emit('added')
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+
+    const schedules = JSON.parse(localStorage.getItem('localSchedules'));
+    schedules.push({
+      _id: Math.random().toString(36).substr(2, 9),
+      garbageType: selectedGarbageType.value.value,
+      location: location.value,
+      footnote: note.value,
+      frequency: selectedFrequency.value.value,
+      date: date.value,
+    });
+
+    localStorage.setItem('localSchedules', JSON.stringify(schedules));
+
+    visible.value = false;
   }
 }
 

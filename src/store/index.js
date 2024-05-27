@@ -53,6 +53,8 @@ export const useStore = defineStore('app', () => {
 
     const getUser = () => user.value
 
+    const getUserPermissions = () => userPermissions.value
+
     return {
         login,
         logout,
@@ -60,6 +62,7 @@ export const useStore = defineStore('app', () => {
         setLoggedIn,
         updateUserPermissions,
         isAuthenticated,
-        getUser
+        getUser,
+        getUserPermissions
     }
 })

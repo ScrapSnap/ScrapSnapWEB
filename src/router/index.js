@@ -28,6 +28,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/collection-points',
+                    name: 'collection-points',
+                    component: () => import('@/views/pages/collection-points/CollectionPoints.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
                     path: '/inappropriate-disposal',
                     name: 'inappropriate-disposal',
                     component: () => import('@/views/pages/inappropriate-disposal/InappropriateDisposals.vue'),

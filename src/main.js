@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import axiosInstance from "@/axios";
+import annyang from 'annyang';
 
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -109,6 +110,7 @@ import GarbageLineChart from './components/GarbageLineChart.vue';
 import '@/assets/styles.scss';
 
 import {createPinia} from "pinia";
+import axios from "@/axios";
 
 const app = createApp(App);
 const pinia = createPinia()
@@ -143,6 +145,82 @@ if ('serviceWorker' in navigator && 'periodicSync' in navigator) {
             console.error('Periodic Sync registration failed:', error);
         }
     });
+}
+
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            console.log('Access to the microphone granted');
+
+            if (annyang) {
+                console.log('Annyang is ready to go!');
+
+                const commands = {
+                    'next collection': function () {
+                        sayNextCollection();
+                    },
+                    'my stats': function () {
+                        sayUsersStats();
+                    }
+                };
+
+                annyang.addCommands(commands);
+                annyang.debug();
+                annyang.start();
+            } else {
+                console.error('Annyang is not ready to go!');
+            }
+        })
+        .catch(function(error) {
+            console.error('Error accessing the microphone:', error);
+        });
+} else {
+    console.error('getUserMedia is not supported in this browser');
+}
+
+function speak(message) {
+    const utterance = new SpeechSynthesisUtterance(message);
+    window.speechSynthesis.speak(utterance);
+}
+
+const sayNextCollection = async () => {
+    speak('Let me check')
+
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/schedules`);
+
+        if (!response.data) {
+            speak('I could not find the next collection')
+            return;
+        }
+
+        const nextCollection = response.data.find(schedule => schedule.date > new Date().toISOString());
+        const date = new Date(nextCollection.date)
+        const dateFormatted = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+        speak(`The next collection is on ${dateFormatted}`)
+        speak(`The collection is for ${nextCollection.garbageType} waste`)
+    } catch (error) {
+        speak('I could not find the next collection')
+    }
+}
+
+const sayUsersStats = async () => {
+    const user = localStorage.getItem('user');
+    const userId = JSON.parse(user)._id;
+
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/stats/user/${userId}`);
+        if (!response.data || response.data.length === 0) {
+            speak('I could not find your stats')
+            return;
+        }
+
+        const data = response.data[0];
+        speak(`Total ${data.total} kilograms of ${data.type} collected`)
+    } catch (error) {
+        speak('I could not find your stats')
+    }
 }
 
 app.provide('axios', axiosInstance);

@@ -1,33 +1,35 @@
 <template>
   <div>
-    <!-- DataCards for summary statistics -->
-    <div class="grid">
-      <DataCard
-        v-for="(item, index) in summary"
-        :key="index"
-        :type="item.type"
-        :count="item.count"
-        :icon="item.icon"
-      />
+    <div v-if="garbageData.length > 0">
+      <!-- DataCards for summary statistics -->
+      <div class="grid">
+        <DataCard v-for="(item, index) in summary" :key="index" :type="item.type" :count="item.count" :icon="item.icon" />
+      </div>
+
+      
+      <!-- Line Chart for visualizing data -->
+      <GarbageLineChart :chartData="lineChartData" :chartOptions="lineChartOptions" />
+
+      <!-- Chart for visualizing data -->
+      <GarbageChart :chartData="chartData" :chartOptions="chartOptions" />
+
+      <!-- DataTable for detailed garbage collection data -->
+        <DataTable :value="garbageData" responsiveLayout="scroll">
+          <Column field="type" header="Type"></Column>
+          <Column field="total" header="Total (kg)"></Column>
+          <Column field="avg" header="Avg (kg)"></Column>
+          <Column field="max" header="Max (kg)"></Column>
+          <Column field="min" header="Min (kg)"></Column>
+        </DataTable>
+    </div>
+    <div v-else>
+      <div class="flex justify-content-center">
+        <Button label="Refresh Data" icon="pi pi-refresh" @click="getFreshData" />
+      </div>
     </div>
 
-    
-    <!-- Line Chart for visualizing data -->
-    <GarbageLineChart :chartData="lineChartData" :chartOptions="lineChartOptions" />
-    
-    <!-- Chart for visualizing data -->
-    <GarbageChart :chartData="chartData" :chartOptions="chartOptions" />
-    
-    <!-- DataTable for detailed garbage collection data -->
-    <DataTable :value="garbageData" responsiveLayout="scroll">
-    <Column field="type" header="Type"></Column>
-    <Column field="total" header="Total (kg)"></Column>
-    <Column field="avg" header="Avg (kg)"></Column>
-    <Column field="max" header="Max (kg)"></Column>
-    <Column field="min" header="Min (kg)"></Column>
-    </DataTable>
 
-  </div>
+    </div>
 </template>
 
 <script>
@@ -59,23 +61,26 @@ export default {
     this.setupKeyboardListeners();
     this.getFreshData();
   },
+  async unmounted() {
+    document.removeEventListener('keydown', this.setupKeyboardListeners);
+  },
   methods: {
     processData(data) {
          this.summary = [
-            { type: 'Total', count: data.total, icon: 'pi-chart-line' },
-            { type: 'Avg', count: data.avg, icon: 'pi-arrows-v' },
-            { type: 'Max', count: data.max, icon: 'pi-arrow-up' },
-            { type: 'Min', count: data.min, icon: 'pi-arrow-down' },
+            { type: 'Total', count: Math.round(data.total) , icon: 'pi-chart-line' },
+            { type: 'Avg', count: Math.round(data.avg), icon: 'pi-arrows-v' },
+            { type: 'Max', count: Math.round(data.max), icon: 'pi-arrow-up' },
+            { type: 'Min', count: Math.round(data.min), icon: 'pi-arrow-down' },
             //{ type: 'Count', count: data.count, icon: 'pi-chart-line' },
         ];
         
         // Prepare detailed data for DataTable
         this.garbageData = [
-          { type: 'Glass', total: data.totalGlass, avg: data.avgGlass, max: data.maxGlass, min: data.minGlass },
-          { type: 'Metal', total: data.totalMetal, avg: data.avgMetal, max: data.maxMetal, min: data.minMetal },
-          { type: 'Organic', total: data.totalOrganic, avg: data.avgOrganic, max: data.maxOrganic, min: data.minOrganic },
-          { type: 'Paper', total: data.totalPaper, avg: data.avgPaper, max: data.maxPaper, min: data.minPaper },
-          { type: 'Plastic', total: data.totalPlastic, avg: data.avgPlastic, max: data.maxPlastic, min: data.minPlastic },
+          { type: 'Glass', total: Math.round(data.totalGlass), avg: Math.round(data.avgGlass), max: Math.round(data.maxGlass), min: Math.round(data.minGlass) },
+          { type: 'Metal', total: Math.round(data.totalMetal), avg: Math.round(data.avgMetal), max: Math.round(data.maxMetal), min: Math.round(data.minMetal) },
+          { type: 'Organic', total: Math.round(data.totalOrganic), avg: Math.round(data.avgOrganic), max: Math.round(data.maxOrganic), min: Math.round(data.minOrganic) },
+          { type: 'Paper', total: Math.round(data.totalPaper), avg: Math.round(data.avgPaper), max: Math.round(data.maxPaper), min: Math.round(data.minPaper) },
+          { type: 'Plastic', total: Math.round(data.totalPlastic), avg: Math.round(data.avgPlastic), max: Math.round(data.maxPlastic), min: Math.round(data.minPlastic) },
         ];
 
         this.chartData = {
@@ -210,11 +215,16 @@ export default {
     setupKeyboardListeners() {
       document.addEventListener('keydown', (e) => {
         if (e.shiftKey && e.key === 'N') {
-          this.randomNotification();
+          setTimeout(() => {
+            this.randomNotification();
+          }, 1000);
         }
         if (e.shiftKey && e.key === 'R') {
-          this.getFreshData();
-          this.sendNotification('Data Refreshed', 'Data has been refreshed');
+
+          setTimeout(() => {
+            this.getFreshData();
+            this.sendNotification('Data Refreshed', 'Data has been refreshed');
+          }, 1000);
         }
       });
     },
@@ -257,7 +267,7 @@ export default {
       const randomIndex = Math.floor(Math.random() * this.summary.length);
       const { type, count } = this.summary[randomIndex];
       const title = `Random Stat: ${type}`;
-      const body = `Count: ${count}`;
+      const body = `Count: ${Math.round(count)}`;
       this.sendNotification(title, body);
     },
   },

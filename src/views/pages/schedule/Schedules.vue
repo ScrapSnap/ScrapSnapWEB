@@ -48,11 +48,12 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
 import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
 import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
+import { hasPermission, permissions } from "@/permissions";
 
 const hasWriteSchedulePermission = hasPermission(permissions.WriteSchedules);
 
@@ -62,8 +63,6 @@ const loading = ref(true);
 const schedule = ref([]);
 const addScheduleDialog = ref();
 const editScheduleDialog = ref();
-
-const annyangMessage = ref('');
 
 onMounted(() => {
     loadSchedule();

@@ -105,6 +105,20 @@ const requestNotificationsPermissions = async () => {
   }
 }
 
+const requestMicrophonePermission = async () => {
+  if (navigator.mediaDevices) {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        console.log('Microphone permission granted');
+      })
+      .catch(error => {
+        console.error('Microphone permission denied:', error);
+      });
+  } else {
+    console.log('Microphone is not supported');
+  }
+}
+
 const subscribeToPushNotifications = async () => {
   try {
     const registration = await navigator.serviceWorker.register('service-worker.js');
@@ -131,6 +145,7 @@ const urlBase64ToUint8Array = (base64String) => {
 
 onMounted(() => {
   requestNotificationsPermissions();
+  requestMicrophonePermission();
 });
 
 </script>

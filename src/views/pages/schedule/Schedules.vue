@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
 import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
 import { useToast } from "primevue/usetoast";
@@ -66,6 +66,11 @@ const editScheduleDialog = ref();
 
 onMounted(() => {
     loadSchedule();
+    window.addEventListener('online', syncLocalToServer);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('online', syncLocalToServer);
 });
 
 const loadSchedule = async () => {
@@ -75,13 +80,23 @@ const loadSchedule = async () => {
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/schedules`);
 
     if (!response.data) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      //toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
 
+    localStorage.setItem('localSchedules', JSON.stringify(response.data));   
+
     schedule.value = response.data;
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+
+    const schedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+    
+    console.log('Local schedules', schedules);
+
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Showing local data...', life: 3000 });
+    
+    schedule.value = schedules;
+
   } finally {
     loading.value = false;
   }
@@ -92,14 +107,23 @@ const deleteSchedule = async (data) => {
     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/schedules/${data._id}`);
 
     if (!response.data) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      //toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
 
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully deleted', life: 3000 });
     loadSchedule();
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+    
+    const schedules = JSON.parse(localStorage.getItem('localSchedules'));
+    const index = schedules.findIndex(schedule => schedule._id === data._id);
+    schedules.splice(index, 1);
+    
+    localStorage.setItem('localSchedules', JSON.stringify(schedules));
+    
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Deleting locally...', life: 3000 });
+
+    loadSchedule();
   }
 }
 
@@ -157,6 +181,47 @@ const showAddScheduleDialog = () => {
 const showEditScheduleDialog = (data) => {
   editScheduleDialog.value.showDialog(data);
 }
+
+const syncLocalToServer = async () => {
+
+  if (localStorage.getItem('localSchedules') === null) {
+
+    await loadSchedule();
+
+  } else {
+
+    const localSchedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
+
+    localSchedules.forEach(schedule => {
+      delete schedule._id;
+    });
+
+    if (localSchedules.length > 0) {
+      try {
+        schedule.value = [];
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/schedules/replace-all`, localSchedules);
+
+        if (!response.data) {
+          toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+          return;
+        }
+
+        schedule.value = response.data;
+
+        localStorage.removeItem('localSchedules');
+
+        localStorage.setItem('localSchedules', JSON.stringify(response.data));
+
+        toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully synced', life: 3000 });
+
+      } catch (error) {
+        console.error('Sync failed for', localSchedules, error);
+      }
+
+    }
+  }
+};
+
 </script>
 
 <style scoped lang="scss">

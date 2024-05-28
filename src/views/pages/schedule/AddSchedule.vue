@@ -90,7 +90,7 @@ const saveSchedule = async () => {
     });
 
     if (!response.data) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      //toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
 
@@ -98,7 +98,25 @@ const saveSchedule = async () => {
     visible.value = false;
     emit('added')
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+    
+    const schedules = JSON.parse(localStorage.getItem('localSchedules'));
+    schedules.push({
+      _id: Math.random().toString(36).substr(2, 9),
+      garbageType: selectedGarbageType.value.value,
+      location: location.value,
+      footnote: note.value,
+      frequency: selectedFrequency.value.value,
+      date: date.value,
+      dateAdded: new Date()
+    });
+    
+    localStorage.setItem('localSchedules', JSON.stringify(schedules));
+    
+    emit('added')
+
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Saving locally...', life: 3000 });
+    
+    visible.value = false;
   }
 }
 

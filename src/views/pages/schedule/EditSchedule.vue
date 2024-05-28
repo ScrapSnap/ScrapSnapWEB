@@ -93,7 +93,7 @@ const updateSchedule = async () => {
     });
 
     if (!response.data) {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
+      //toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
       return;
     }
 
@@ -101,7 +101,26 @@ const updateSchedule = async () => {
     visible.value = false;
     emit('updated')
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 })
+
+    
+    const schedules = JSON.parse(localStorage.getItem('localSchedules'));
+    const index = schedules.findIndex(schedule => schedule._id === scheduleId.value);
+    schedules[index] = {
+      _id: scheduleId.value,
+      garbageType: selectedGarbageType.value.value,
+      location: location.value,
+      footnote: note.value,
+      frequency: selectedFrequency.value.value,
+      date: date.value,
+    }
+    
+    localStorage.setItem('localSchedules', JSON.stringify(schedules));
+  
+    emit('updated')
+    
+    toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Updating locally...', life: 3000 });
+
+    visible.value = false;
   }
 }
 

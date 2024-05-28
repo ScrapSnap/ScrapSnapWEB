@@ -53,8 +53,6 @@ import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
 import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
 import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
-import { hasPermission, permissions } from "@/permissions";
-import annyang from 'annyang';
 
 const hasWriteSchedulePermission = hasPermission(permissions.WriteSchedules);
 
@@ -69,39 +67,7 @@ const annyangMessage = ref('');
 
 onMounted(() => {
     loadSchedule();
-    //startListening();
 });
-
-onUnmounted(() => {
-    //stopListening();
-});
-
-const startListening = async () => {
-  if (annyang) {
-    const commands = {
-      'hello': () => {
-        annyangMessage.value = 'Hello!';
-      },
-      'new schedule': () => {
-        if (hasWriteSchedulePermission) {
-          showAddScheduleDialog();
-        }
-      },
-      '*phrase': (phrase) => {
-        annyangMessage.value = `You said: ${phrase}`;
-      },
-    };
-
-    annyang.addCommands(commands);
-    annyang.start();
-  }
-}
-
-const stopListening = () => {
-  if (annyang) {
-    annyang.abort();
-  }
-}
 
 const loadSchedule = async () => {
   loading.value = true;

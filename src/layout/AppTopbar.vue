@@ -66,7 +66,10 @@ const isOutsideClicked = (event) => {
 const settingsMenuItems = ref([
     {
         label: 'Profile',
-        icon: 'pi pi-users'
+        icon: 'pi pi-users',
+        command: () => {
+            profile();
+        }
     },
     {
         separator: true
@@ -79,6 +82,23 @@ const settingsMenuItems = ref([
         }
     }
 ]);
+
+async function profile() {
+    try {
+        await router.push('/user-profile');
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function schedule() {
+    try {
+        await router.push('/schedule');
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 async function logout() {
     try {
@@ -106,11 +126,11 @@ async function logout() {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <button @click="schedule()" class="p-link layout-topbar-button">
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
             </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <button @click="profile()" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>

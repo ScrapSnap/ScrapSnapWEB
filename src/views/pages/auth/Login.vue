@@ -82,7 +82,7 @@ async function login() {
 
     await store.login(response.data.token, response.data.user);
     await store.updateUserPermissions();
-    subscribeToPushNotifications();
+    subscribeToPushNotifications(response.data.user._id);
 
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
@@ -119,7 +119,7 @@ const requestMicrophonePermission = async () => {
   }
 }
 
-const subscribeToPushNotifications = async () => {
+const subscribeToPushNotifications = async (userId) => {
   try {
     const registration = await navigator.serviceWorker.register('service-worker.js');
 
@@ -130,6 +130,8 @@ const subscribeToPushNotifications = async () => {
       });
 
       await axiosInstance.post(`${import.meta.env.VITE_API_BASE_URL}/subscriptions`, subscription);
+
+      await checkAndNotifyGarbageCollection(userId)
     }
   } catch (error) {
     console.error('Service Worker registration failed:', error);
@@ -141,6 +143,14 @@ const urlBase64ToUint8Array = (base64String) => {
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
   return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+}
+
+const checkAndNotifyGarbageCollection = async (userId) => {
+  try {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/subscriptions/notify-user`, {
+      userId: userId
+    });
+  } catch {}
 }
 
 onMounted(() => {

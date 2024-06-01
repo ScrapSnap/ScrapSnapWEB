@@ -26,22 +26,6 @@
       </div>
 
       <div class="card p-fluid">
-        <h5>Vertical Grid</h5>
-        <div class="formgrid grid">
-          <div class="field col">
-            <label for="name2">Name</label>
-            <InputText id="name2" type="text" />
-          </div>
-          <div class="field col">
-            <label for="email2">Email</label>
-            <InputText id="email2" type="text" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 md:col-6">
-      <div class="card p-fluid">
         <h5>Change Password</h5>
         <div class="field grid">
           <label for="name3" class="col-12 mb-2 md:col-5 md:mb-0">Current Password</label>
@@ -57,6 +41,19 @@
         </div>
         <br />
         <Button @click="updateUserPassword" :loading="isLoadingPassword" label="Change"></Button>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="card flex justify-content-center">
+        <div class="text-center">
+          <h4>✨ Loyalty Points ✨</h4>
+          <br>
+          <Knob v-model="userPoints" :max="nextLevelPoints" :size="200" />
+          <br>
+          <p><b>{{ userDiscount }}%</b> discount on your purchases </p>
+          <p>🚀 <b>{{ nextLevelPoints - userPoints }}</b> required for next level <b>{{ nextLevel }}.</b></p>
+        </div>
       </div>
     </div>
   </div>
@@ -79,6 +76,11 @@ const currentPassword = ref('');
 const newPassword = ref('');
 const isLoadingUpdateProfile = ref(false);
 const isLoadingPassword = ref(false);
+
+const userPoints = ref(55);
+const nextLevelPoints = ref(100);
+const userDiscount = ref(5);
+const nextLevel = ref(4);
 
 onMounted(() => {
   const user = store.getUser();

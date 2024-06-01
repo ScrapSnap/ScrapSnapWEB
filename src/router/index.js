@@ -38,7 +38,7 @@ const router = createRouter({
                 {
                     path: '/inappropriate-disposal',
                     name: 'inappropriate-disposal',
-                    component: () => import('@/views/pages/inappropriate-disposal/UploadInappropriateDisposal.vue'),
+                    component: () => import('@/views/pages/inappropriate-disposal/InappropriateDisposals.vue'),
                     meta: {
                         requiredAuth: true
                     }

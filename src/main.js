@@ -217,7 +217,7 @@ const sayUsersStats = async () => {
         }
 
         const data = response.data[0];
-        speak(`Total ${data.total} kilograms of ${data.type} collected`)
+        speak(`Total ${data.total} and average ${data.avg} kilograms of waste collected`)
     } catch (error) {
         speak('I could not find your stats')
     }

@@ -13,6 +13,10 @@
       <InputText v-model="lastname" class="flex-auto" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
+      <label for="location" class="font-semibold w-6rem">Location</label>
+      <InputText v-model="location" class="flex-auto" />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
       <label for="email" class="font-semibold w-6rem">Email</label>
       <InputText v-model="email" class="flex-auto" />
     </div>
@@ -40,6 +44,7 @@ const visible = ref(false);
 const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
+const location = ref('');
 const password = ref('');
 const selectedRole = ref();
 const roles = ref([]);
@@ -49,7 +54,6 @@ const emit = defineEmits(['added']);
 const loadRoles = async () => {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/roles`);
-    console.log(response.data);
     roles.value = response.data;
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Something went wrong...', life: 3000 });
@@ -67,13 +71,12 @@ const saveUser = async () => {
     return;
   }
 
-  console.log(selectedRole.value);
-
   try {
     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/users`, {
       firstname: firstname.value,
       lastname: lastname.value,
       email: email.value,
+      location: location.value,
       password: password.value,
       roleId: selectedRole.value.id
     });

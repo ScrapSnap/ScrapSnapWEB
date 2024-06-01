@@ -17,6 +17,10 @@
       </div>
     </div>
     <div class="flex align-items-center gap-3 mb-3">
+      <label for="location" class="font-semibold w-6rem">Location</label>
+      <InputText v-model="location" class="flex-auto" />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
       <label for="email" class="font-semibold w-6rem">Email</label>
       <div class="flex flex-column gap-2">
         <InputText v-model="email" class="flex-auto" />
@@ -50,6 +54,7 @@ const userId = ref('');
 const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
+const location = ref('');
 const password = ref('');
 const selectedRole = ref();
 const roles = ref([]);
@@ -81,6 +86,7 @@ const updateUser = async () => {
       firstname: firstname.value,
       lastname: lastname.value,
       email: email.value,
+      location: location.value,
       password: password.value ? password.value : '',
       roleId: selectedRole.value.id
     });

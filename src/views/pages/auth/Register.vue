@@ -17,7 +17,10 @@
                         <label for="lastname" class="block text-900 text-xl font-medium mb-2">Lastname</label>
                         <InputText id="lastname" type="text" placeholder="Lastname" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="lastname" />
 
-                        <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <label for="location" class="block text-900 text-xl font-medium mb-2">Location</label>
+                        <InputText id="location" type="text" placeholder="Location" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="location" />
+
+                      <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
                         <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" v-model="email" />
 
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
@@ -59,6 +62,7 @@ const { layoutConfig } = useLayout();
 const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
+const location = ref('');
 const password = ref('');
 const checked = ref(false);
 
@@ -76,6 +80,7 @@ async function register() {
       firstname: firstname.value,
       lastname: lastname.value,
       email: email.value,
+      location: location.value,
       password: password.value,
       roleId: '',
     });

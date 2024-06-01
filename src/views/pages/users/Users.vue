@@ -20,6 +20,12 @@
           <span v-else>{{ data.lastname }}</span>
         </template>
       </Column>
+      <Column field="location" header="Location" sortable>
+        <template #body="{ data }">
+          <Skeleton v-if="loading"></Skeleton>
+          <span v-else>{{ data.location }}</span>
+        </template>
+      </Column>
       <Column field="email" header="Email" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>

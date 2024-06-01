@@ -14,6 +14,10 @@
           <InputText v-model="lastname" id="lastname1" type="text" />
         </div>
         <div class="field">
+          <label for="location">Location</label>
+          <InputText v-model="location" id="location" type="text" />
+        </div>
+        <div class="field">
           <label for="email1">Email</label>
           <InputText v-model="email" id="email1" type="text" />
         </div>
@@ -70,6 +74,7 @@ const userInitials = ref('??')
 const name = ref('');
 const lastname = ref('');
 const email = ref('');
+const location = ref('');
 const currentPassword = ref('');
 const newPassword = ref('');
 const isLoadingUpdateProfile = ref(false);
@@ -85,6 +90,7 @@ onMounted(() => {
   name.value = user.firstname;
   lastname.value = user.lastname;
   email.value = user.email;
+  location.value = user.location;
   userInitials.value = user.firstname.charAt(0) + user.lastname.charAt(0);
 });
 
@@ -95,7 +101,8 @@ const updateUserData = async () => {
   const user = {
     firstname: name.value,
     lastname: lastname.value,
-    email: email.value
+    email: email.value,
+    location: location.value
   };
 
   try {

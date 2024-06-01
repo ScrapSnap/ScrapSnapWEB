@@ -118,6 +118,14 @@ const openImage = (image) => {
 	isDialogVisible.value = true;
 };
 
+const redirectToCoordinatesAndZoomOut = (longitude, latitude, zoomLevel) => {
+  map.flyTo({
+    center: [longitude, latitude],
+    zoom: zoomLevel,
+    essential: true
+  });
+}
+
 onMounted(() => {
 	loadDisposals();
 
@@ -127,9 +135,11 @@ onMounted(() => {
     accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
     container: mapContainer.value,
     style: 'mapbox://styles/mapbox/standard',
-    center: [15.645585, 46.557644],
-    zoom: 17
+    center: [15.045314, 46.150356],
+    zoom: 10
   });
+
+  redirectToCoordinatesAndZoomOut(15.045314, 46.150356, 7);
 });
 </script>
 

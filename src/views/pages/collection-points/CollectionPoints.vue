@@ -23,15 +23,25 @@ onMounted(() => {
     accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
     container: mapContainer.value,
     style: 'mapbox://styles/mapbox/standard',
-    center: [15.645585, 46.557644],
-    zoom: 17
+    center: [15.045314, 46.150356],
+    zoom: 10
   });
 
   loadCollectionPoints();
+
+  redirectToCoordinatesAndZoomOut(15.045314, 46.150356, 7);
 });
 
 const getMarkerPopup = (collectionPoint) => {
   return new mapboxgl.Popup({offset: 25}).setHTML(`<h3>${collectionPoint.location}</h3><p>${new Date().toLocaleTimeString()}</p>`);
+}
+
+const redirectToCoordinatesAndZoomOut = (longitude, latitude, zoomLevel) => {
+  map.flyTo({
+    center: [longitude, latitude],
+    zoom: zoomLevel,
+    essential: true
+  });
 }
 
 const loadCollectionPoints = async () => {

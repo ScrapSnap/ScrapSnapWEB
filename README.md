@@ -23,6 +23,9 @@
   <img src="/screenshots/collection_points.png" width="49%" />
   <img src="/screenshots/inappropriate_disposals.png" width="49%" />
 </p>
+<p align="center">
+  <img src="/screenshots/profile.png" width="75%" />
+</p>
 
 ## Table of Contents
 

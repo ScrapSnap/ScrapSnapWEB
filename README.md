@@ -15,6 +15,10 @@
 ### Check out [NestJS API](https://github.com/ScrapSnap/EndpointAPI) (Typescript, MongoDB, Minio).
 
 <p align="center">
+  <img src="/screenshots/ScrapSnapSafariFade.gif" width="80%" />
+</p>
+
+<p align="center">
   <img src="/screenshots/dashboard.png" width="49%" />
   <img src="/screenshots/schedules.png" width="49%" />
 </p>

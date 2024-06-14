@@ -12,6 +12,8 @@
 
 👋 Welcome to ScrapSnap, an innovative Progressive Web Application (PWA) designed to revolutionize waste management and enhance community cleanliness. This README provides an overview of the features, installation instructions, and usage guidelines for ScrapSnap. Plus, with its PWA capabilities, ScrapSnap can seamlessly work offline on both web and mobile platforms, ensuring uninterrupted access to its features regardless of connectivity.
 
+[Pitch (Google Slides)](https://docs.google.com/presentation/d/134nrVUDLRVHCj92R1ZBsoqXtbZc5VBZ4/edit#slide=id.g2e54ed02892_0_0)
+
 ### Check out [NestJS API](https://github.com/ScrapSnap/EndpointAPI) (Typescript, MongoDB, Minio).
 
 <p align="center">

@@ -7,11 +7,11 @@
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="date" class="font-semibold w-6rem">Date</label>
-      <Calendar v-model="date" dateFormat="dd/mm/yy" showIcon iconDisplay="input" />
+      <Calendar id="date-picker" v-model="date" dateFormat="dd/mm/yy" showIcon iconDisplay="input" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="type" class="font-semibold w-6rem">Type</label>
-      <Dropdown v-model="selectedFrequency" :options="frequencies" optionLabel="name" placeholder="Select a Frequency" class="w-full md:w-14rem" style="z-index: 1000;"  />
+      <Dropdown id="frequency" v-model="selectedFrequency" :options="frequencies" optionLabel="name" placeholder="Select a Frequency" class="w-full md:w-14rem" style="z-index: 1000;"  />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="location" class="font-semibold w-6rem">Location</label>
@@ -19,7 +19,7 @@
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="note" class="font-semibold w-6rem">Note</label>
-      <InputText v-model="note" class="flex-auto" />
+      <InputText id="note-input" v-model="note" class="flex-auto" />
     </div>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
@@ -98,7 +98,7 @@ const saveSchedule = async () => {
     visible.value = false;
     emit('added')
   } catch (error) {
-    
+
     const schedules = JSON.parse(localStorage.getItem('localSchedules'));
     schedules.push({
       _id: Math.random().toString(36).substr(2, 9),
@@ -109,13 +109,13 @@ const saveSchedule = async () => {
       date: date.value,
       dateAdded: new Date()
     });
-    
+
     localStorage.setItem('localSchedules', JSON.stringify(schedules));
-    
+
     emit('added')
 
     toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Saving locally...', life: 3000 });
-    
+
     visible.value = false;
   }
 }

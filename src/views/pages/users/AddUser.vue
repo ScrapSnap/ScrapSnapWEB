@@ -2,27 +2,27 @@
   <Dialog v-model:visible="visible" modal header="New User" :draggable="false" :style="{ width: '40rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
     <div class="flex align-items-center gap-3 mb-3">
       <label for="type" class="font-semibold w-6rem">Role</label>
-      <Dropdown v-model="selectedRole" :options="roles" optionLabel="name" placeholder="Select a Role" class="w-full md:w-14rem" style="z-index: 1000;"  />
+      <Dropdown id="role-dropdown" v-model="selectedRole" :options="roles" optionLabel="name" placeholder="Select a Role" class="w-full md:w-14rem" style="z-index: 1000;"  />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="firstname" class="font-semibold w-6rem">Name</label>
-      <InputText v-model="firstname" class="flex-auto" />
+      <InputText id="firstname-input" v-model="firstname" class="flex-auto" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="lastname" class="font-semibold w-6rem">Lastname</label>
-      <InputText v-model="lastname" class="flex-auto" />
+      <InputText id="lastname-input" v-model="lastname" class="flex-auto" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="location" class="font-semibold w-6rem">Location</label>
-      <InputText v-model="location" class="flex-auto" />
+      <InputText id="location-input" v-model="location" class="flex-auto" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="email" class="font-semibold w-6rem">Email</label>
-      <InputText v-model="email" class="flex-auto" />
+      <InputText id="email-input" v-model="email" class="flex-auto" />
     </div>
     <div class="flex align-items-center gap-3 mb-3">
       <label for="password" class="font-semibold w-6rem">Password</label>
-      <InputText v-model="password" type="password" class="flex-auto" />
+      <InputText id="password-input" v-model="password" type="password" class="flex-auto" />
     </div>
     <div class="flex justify-content-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>

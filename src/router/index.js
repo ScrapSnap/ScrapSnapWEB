@@ -22,7 +22,47 @@ const router = createRouter({
                 {
                     path: '/schedule',
                     name: 'schedule',
-                    component: () => import('@/views/pages/schedule/Schedules.vue'),
+                    component: () => import('@/views/pages/schedule/schedules/Schedules.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/schedule-a',
+                    name: 'schedule-a',
+                    component: () => import('@/views/pages/schedule/schedules/Schedules-A.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/schedule-b',
+                    name: 'schedule-b',
+                    component: () => import('@/views/pages/schedule/schedules/Schedules-B.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/add-schedule',
+                    name: 'add-schedule',
+                    component: () => import('@/views/pages/schedule/add-schedule/AddSchedule-A.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/add-schedule-a',
+                    name: 'add-schedule-a',
+                    component: () => import('@/views/pages/schedule/add-schedule/AddSchedule-A.vue'),
+                    meta: {
+                        requiredAuth: true
+                    }
+                },
+                {
+                    path: '/add-schedule-b',
+                    name: 'add-schedule-b',
+                    component: () => import('@/views/pages/schedule/add-schedule/AddSchedule-B.vue'),
                     meta: {
                         requiredAuth: true
                     }
@@ -132,6 +172,26 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.requiredPermissions && !checkPermissions(to.meta.requiredPermissions)) {
         return next('/auth/access')
+    }
+
+    /*** A/B TESTING - ADDING SCHEDULE ***/
+    if (to.name === 'add-schedule') {
+        const testGroup = localStorage.getItem('test_group')
+        if (testGroup === 'a') {
+            return next('/add-schedule-a')
+        } else if (testGroup === 'b') {
+            return next('/add-schedule-b')
+        }
+    }
+
+    /*** A/B TESTING - DISPLAYING SCHEDULES ***/
+    if (to.name === 'schedule') {
+        const testGroup = localStorage.getItem('test_group')
+        if (testGroup === 'a') {
+            return next('/schedule-a')
+        } else if (testGroup === 'b') {
+            return next('/schedule-b')
+        }
     }
 
     next()

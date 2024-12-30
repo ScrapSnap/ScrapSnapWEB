@@ -84,6 +84,14 @@ async function login() {
     await store.updateUserPermissions();
     subscribeToPushNotifications(response.data.user._id);
 
+    if (email.value === 'userA@mail.com') {
+      localStorage.setItem("test_group", "a");
+    } else if (email.value === 'userB@mail.com') {
+      localStorage.setItem("test_group", "b");
+    } else {
+      localStorage.setItem("test_group", "");
+    }
+
     await router.push('/');
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Logged in successfully', life: 3000 });
   } catch (error) {

@@ -7,11 +7,14 @@
       <Button label="New Schedule" icon="pi pi-plus" @click="showAddScheduleDialog" />
     </div>
 
-    <DataTable :value="schedule" stripedRows>
+    <DataTable v-model:filters="filters" :value="schedule" filter-display="row" :globalFilterFields="['location', 'frequency', 'garbageType']" stripedRows>
       <Column field="location" header="Location" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
           <span v-else>{{ data.location }}</span>
+        </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search by location" />
         </template>
       </Column>
       <Column field="date" header="Date" sortable>
@@ -25,11 +28,17 @@
           <Skeleton v-if="loading"></Skeleton>
           <Tag v-else :value="data.frequency" :style="{ backgroundColor: getFrequencyColor(data.frequency) }"></Tag>
         </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search by frequency" />
+        </template>
       </Column>
       <Column field="garbageType" header="Garbage Type" sortable>
         <template #body="{ data }">
           <Skeleton v-if="loading"></Skeleton>
           <Tag v-else :value="data.garbageType" :style="{ backgroundColor: getGarbageTypeColor(data.garbageType) }"></Tag>
+        </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search by type" />
         </template>
       </Column>
       <Column v-if="hasWriteSchedulePermission" header="Actions">
@@ -49,11 +58,13 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import AddSchedule from "@/views/pages/schedule/AddSchedule.vue";
-import EditSchedule from "@/views/pages/schedule/EditSchedule.vue";
+import AddSchedule from "@/views/pages/schedule/add-schedule/AddSchedule.vue";
+import EditSchedule from "@/views/pages/schedule/edit-schedule/EditSchedule.vue";
 import { useToast } from "primevue/usetoast";
 import axios from "@/axios";
 import { hasPermission, permissions } from "@/permissions";
+import router from "@/router";
+import {FilterMatchMode} from "primevue/api";
 
 const hasWriteSchedulePermission = hasPermission(permissions.WriteSchedules);
 
@@ -63,6 +74,13 @@ const loading = ref(true);
 const schedule = ref([]);
 const addScheduleDialog = ref();
 const editScheduleDialog = ref();
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  location: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  frequency: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  garbageType: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 onMounted(() => {
     loadSchedule();
@@ -84,17 +102,17 @@ const loadSchedule = async () => {
       return;
     }
 
-    localStorage.setItem('localSchedules', JSON.stringify(response.data));   
+    localStorage.setItem('localSchedules', JSON.stringify(response.data));
 
     schedule.value = response.data;
   } catch (error) {
 
     const schedules = JSON.parse(localStorage.getItem('localSchedules')) || [];
-    
+
     console.log('Local schedules', schedules);
 
     toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Showing local data...', life: 3000 });
-    
+
     schedule.value = schedules;
 
   } finally {
@@ -114,13 +132,13 @@ const deleteSchedule = async (data) => {
     toast.add({ severity: 'success', summary: 'Success Message', detail: 'Successfully deleted', life: 3000 });
     loadSchedule();
   } catch (error) {
-    
+
     const schedules = JSON.parse(localStorage.getItem('localSchedules'));
     const index = schedules.findIndex(schedule => schedule._id === data._id);
     schedules.splice(index, 1);
-    
+
     localStorage.setItem('localSchedules', JSON.stringify(schedules));
-    
+
     toast.add({ severity: 'warn', summary: 'Offline', detail: 'You are offline. Deleting locally...', life: 3000 });
 
     loadSchedule();
@@ -175,7 +193,8 @@ const formatDate = (dateString) => {
 }
 
 const showAddScheduleDialog = () => {
-  addScheduleDialog.value.showDialog()
+  //addScheduleDialog.value.showDialog()
+  router.push({ name: 'add-schedule' });
 }
 
 const showEditScheduleDialog = (data) => {
